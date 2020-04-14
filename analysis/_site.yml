@@ -1,7 +1,7 @@
-name: "DG_WF"
+name: DG_WF
 output_dir: ../docs
 navbar:
-  title: "DG_WF"
+  title: DG_WF
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/AineDuffy/DG_WF
 output:
   workflowr::wflow_html:
     toc: yes
