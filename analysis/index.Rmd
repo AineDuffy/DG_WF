@@ -9,3 +9,5 @@ editor_options:
 ---
 
 Welcome to my research website.
+
+Click on this [link](file:///Users/aineduffy/Documents/Code/myproject/docs/siderdata_intial.html) to see side effect results.

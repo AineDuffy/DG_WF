@@ -1,0 +1,182 @@
+---
+title: "Side effect info in SIDER 2"
+author: "AineDuffy"
+date: "2020-04-14"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+####Looking at the frequency of side effects and drugs in SIDER V2 (2012-10-17). Data sourced from FTP link from [Here](http://sideeffects.embl.de) 
+
+```{r, include=F}
+library(data.table)
+library(stringr)
+library(xlsx)
+library(ggplot2) 
+library(dplyr)
+library(kableExtra)
+library(DT)
+```
+
+### Overview of dataset 
+``` {r, echo=F, message=T}
+se=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/meddra_adverse_effects.tsv.gz',data.table=F)
+colnames(se)=c('stich1','stich2','umls_onlabel','drugname','se','medra_concepttype','umls_medra','medra_se')
+head(se)
+print(paste('There are ',length(unique(se$drugname)), 'unique drugs with se' ))
+print(paste('There are ',length(unique(se$medra_se)), 'unique se' ))
+se=se[which(se$medra_concepttype=='PT'),]
+print(paste('There are ',length(unique(se$drugname)), 'unique drugs with se' ))
+print(paste('There are ',length(unique(se$medra_se)), 'unique PT se' ))
+```
+#### Taking just preferred term 'PT' side effects
+```{r, echo=F}
+
+#996 drugs 
+#4492 UNIQUE SE. #3209 PT
+se_table=se[c(4,8)][!duplicated(se[c(4,8)]),]
+setab=as.data.frame(se_table %>% 
+ group_by(medra_se) %>% tally() %>%
+  arrange(desc(n)))
+
+###Side effect frequency
+DT::datatable(setab,caption = 'Table 1: Side effect frequency in Sider', filter='top',colnames=c('Side effects','Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy','csvHtml15','excel'))
+
+####Side effect frequency summary
+summary(setab$n)
+
+ggplot(setab, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Side effect frequency',y='Number of drugs', title='Side effect frequency across SIDER2') +
+  theme_classic()
+
+```
+
+### Match side effects to ICD10 codes 
+```{r, echo=F}
+###Side effects matched to ICD10 codes
+icd_cui=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/MRCONSO.RRF.txt',data.table=F, quote='')
+icd_cui=icd_cui %>% filter(V12=='ICD10CM',V2=='ENG' ) %>% distinct(V1,V11) %>% rename(umls_medra=V1,ICD10=V11)
+se_icd=merge(se, icd_cui, by='umls_medra')
+colnames(se_icd)=gsub('ICD10','ICD10_SE', colnames(se_icd))
+se_icd=se_icd[c(5,6,8,9)]
+print(paste('There are ',length(unique(se_icd$drugname)), 'unique drugs with se that match to ICD10' ))
+print(paste('There are ',length(unique(se_icd$medra_se)), 'unique se' ))
+print(paste('There are ',length(unique(se_icd$ICD10_SE)), 'unique ICD codes' ))
+``` 
+
+#### some se have mutliple icd10 codes
+```{r, echo=F}
+
+se1=as.data.frame(se_icd %>% select(medra_se, ICD10_SE) %>% distinct() %>% group_by(medra_se) %>% filter(n()>1))
+head(se1)
+
+###frequency of each side effect 
+setab_icd=se_icd %>% select(drugname, medra_se,ICD10_SE) %>% distinct() %>% 
+ group_by(medra_se,ICD10_SE) %>% tally() %>%
+  arrange(desc(n))
+print(paste('There are ',length(unique(se1$medra_se)), 'unique medra_se with duplicate ICD10 codes' ))
+
+ 
+###Side effect frequency for each drug once match to icd
+DT::datatable(setab_icd, caption = 'Table 2: Side effect frequency in Sider matched to ICD10 code',filter='top', colnames=c('Side effects','ICD10'  ,'Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy'))
+
+####Side effect frequency summary
+
+summary(setab_icd$n)
+ggplot(setab_icd, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Side effect frequency',y='Frequency', title='Side effect frequency which match to ICD10 codes') +
+  theme_classic()
+```
+
+#### Frequency of se per drugs
+
+```{r, echo=F}
+drugse=se_icd %>% select(drugname, medra_se) %>% distinct() %>%  group_by(drugname) %>% tally() %>%
+  arrange(desc(n))
+summary(drugse$n)
+ggplot(drugse, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Number of Side effects per drug',y='Number of drugs', title='Number of Side effects per drug') +
+  theme_classic()
+
+```
+
+### ADR risk score
+```{r, echo=F}
+
+adr=read.xlsx('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/ADR_rankscore.xlsx', sheetIndex=1)
+adr$Name=str_to_lower(adr$Name)
+
+se_icd$medra_se=str_to_lower(se_icd$medra_se)
+se_icd$se=str_to_lower(se_icd$se)
+
+se_icd$se_adr1=adr$Rank.score[match(se_icd$medra_se, adr$Name)]
+se_icd$se_adr2=adr$Rank.score[match(se_icd$se, adr$Name)]
+se_icd$se_adr<-ifelse(!is.na(se_icd$se_adr1), se_icd$se_adr1, se_icd$se_adr2)
+se_icd=se_icd[c(-5,-6)]
+paste(length(unique(se_icd$medra_se[!is.na(se_icd$se_adr)])), 'out of', length(unique(se_icd$medra_se)), 'unique se have a adr score')
+## "1258 out of 1342 unique se have a adr score"
+drugadr=se_icd  %>% select(drugname, medra_se, se_adr) %>% distinct()
+
+drug1=drugadr %>% group_by(drugname) %>% summarise(total.no_adr=n(), meanadr=mean(se_adr, na.rm=T), sd=sd(se_adr, na.rm = T))
+DT::datatable(drug1)
+summary(drug1[-1])
+  
+```
+
+### Match ICD to Phecodes and get ADR phecode score
+
+```{r, echo=F, message=F}
+
+#ICDCODES TO SAIGE
+ICD=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/ICD10CM2PHECODE.csv',data.table=F)
+icd_adr=se_icd %>% select(ICD10_SE, se_adr) %>% distinct()
+
+#some duplicate scores for icd codes with dup se 
+ICD$ADR=icd_adr$se_adr[match(ICD$ICD10CM, icd_adr$ICD10_SE)]
+
+
+#phecode to icd frequency 
+##each icd maps to only one phecode but multipe icds map to same 
+
+se_icd$PHECODE_SE=ICD$PHECODE[match(se_icd$ICD10_SE,ICD$ICD10CM)]
+se_icd$PHECODE_DESC_SE=ICD$PHECODE_DESC[match(se_icd$ICD10_SE,ICD$ICD10CM)]
+se_icd=se_icd[!duplicated(se_icd),]
+ 
+Phenotype_cateogory=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/phecode_definitions1.2.csv',data.table=F)
+se_icd$phecode_category=Phenotype_cateogory$category[match(se_icd$PHECODE_SE, Phenotype_cateogory$phecode)]
+#Map number of distinct se + their phecodes to the phecode cateogory
+Phecodefreq=as.data.frame(se_icd %>% select(PHECODE_SE,phecode_category) %>% distinct() %>% group_by(phecode_category)   %>% tally(name = 'number_phecodes'))
+se_phecodecat=as.data.frame(se_icd %>% select(medra_se,phecode_category) %>% distinct() %>% group_by(phecode_category) %>% tally(name = 'number_se'))
+Phefre=merge(Phecodefreq, se_phecodecat,by='phecode_category')
+Phefre1=melt(Phefre)                         
+
+ggplot(Phefre1, aes(x=phecode_category, y=value, fill=variable))+ geom_bar(stat = "identity",position='dodge') +theme_classic()+theme(axis.text.x = element_text(angle=-90)) + labs(x='Phecode cateogories', y='Number of side effects') 
+
+```
+
+### Match to entrez id  
+
+```{r, echo=F}
+
+drugbank=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/Target Drug-UniProt Links_ALL.csv',data.table=F, select=c(2,4))
+#drugs and uniprot id
+drugbank$Name=str_to_lower(drugbank$Name)
+colnames(drugbank)[1]='drugname'
+GeneDic <- fread("/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/GeneDictionary.txt", data.table = FALSE, select=c(2,19,26))
+drugbank$entrez_id=GeneDic$entrez_id[match(drugbank$`UniProt ID`, GeneDic$uniprot_ids)]
+drugbank$symbol=GeneDic$symbol[match(drugbank$`UniProt ID`, GeneDic$uniprot_ids)]
+drugbank1=drugbank[!is.na(drugbank$entrez_id),]
+
+
+se_icd_gene=inner_join(se_icd, drugbank[-2], by='drugname') #file -412794 rows
+se_icd_gene=se_icd_gene[!is.na(se_icd_gene$entrez_id),]
+# #664 drugs 
+
+print(paste('There are',length(unique(se_icd_gene$drugname)), 'unique drugs'))
+print(paste('There are',length(unique(se_icd_gene$entrez_id)), 'unique genes'))
+print(paste('There are',length(unique(se_icd_gene$medra_se)), 'unique se and out of these', length(unique(se_icd_gene$medra_se[!is.na(se_icd_gene$se_adr)])), 'has an adr score'))
+print(paste('There are',length(unique(se_icd_gene$PHECODE_SE)), 'unique phecodes and out of these', length(unique(se_icd_gene$PHECODE_SE[!is.na(se_icd_gene$se_adr)])), 'has an adr score'))
+```
+
