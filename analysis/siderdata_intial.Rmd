@@ -11,6 +11,7 @@ editor_options:
 ####Looking at the frequency of side effects and drugs in SIDER V2 (2012-10-17). Data sourced from FTP link from [Here](file:///Users/aineduffy/Documents/PhD/DrugGenetics/DG_WF/docs/siderdata_intial.html) 
 
 ```{r, include=F}
+
 library(data.table)
 library(stringr)
 library(xlsx)
