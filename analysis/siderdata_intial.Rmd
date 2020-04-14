@@ -128,7 +128,7 @@ summary(drug1[-1])
 
 ### Match ICD to Phecodes and get ADR phecode score
 
-```{r, echo=F, message=F}
+```{r, echo=F}
 
 #ICDCODES TO SAIGE
 ICD=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/ICD10CM2PHECODE.csv',data.table=F)
@@ -151,7 +151,7 @@ se_icd$phecode_category=Phenotype_cateogory$category[match(se_icd$PHECODE_SE, Ph
 Phecodefreq=as.data.frame(se_icd %>% select(PHECODE_SE,phecode_category) %>% distinct() %>% group_by(phecode_category)   %>% tally(name = 'number_phecodes'))
 se_phecodecat=as.data.frame(se_icd %>% select(medra_se,phecode_category) %>% distinct() %>% group_by(phecode_category) %>% tally(name = 'number_se'))
 Phefre=merge(Phecodefreq, se_phecodecat,by='phecode_category')
-Phefre1=melt(Phefre)                         
+Phefre1=melt(Phefre,id.var='phecode_category')                         
 
 ggplot(Phefre1, aes(x=phecode_category, y=value, fill=variable))+ geom_bar(stat = "identity",position='dodge') +theme_classic()+theme(axis.text.x = element_text(angle=-90)) + labs(x='Phecode cateogories', y='Number of side effects') 
 
