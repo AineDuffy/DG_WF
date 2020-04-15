@@ -516,16 +516,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree1104233f7b10a36b93a01acf56daf635a6b5fe99targetblank1104233a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/1104233f7b10a36b93a01acf56daf635a6b5fe99" target="_blank">1104233</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtreee4a202c118673eabde566c060c46945e84b72a79targetblanke4a202ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/e4a202c118673eabde566c060c46945e84b72a79" target="_blank">e4a202c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree1104233f7b10a36b93a01acf56daf635a6b5fe99targetblank1104233a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtreee4a202c118673eabde566c060c46945e84b72a79targetblanke4a202ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/1104233f7b10a36b93a01acf56daf635a6b5fe99" target="_blank">1104233</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/e4a202c118673eabde566c060c46945e84b72a79" target="_blank">e4a202c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -571,6 +571,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/e4a202c118673eabde566c060c46945e84b72a79/analysis/siderdata_intial.Rmd" target="_blank">e4a202c</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-04-14
+</td>
+<td>
+Added correlation matrix for se v adr score
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AineDuffy/DG_WF/b16fdb3ac398e614c7a0be7b8bb2ca9ecd7a5e52/docs/siderdata_intial.html" target="_blank">b16fdb3</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-04-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -915,6 +949,19 @@ AineDuffy
  3rd Qu.: 85.00   3rd Qu.:0.4429   3rd Qu.:0.20257  
  Max.   :409.00   Max.   :0.6407   Max.   :0.30963  
                                    NA&#39;s   :7        </code></pre>
+<pre><code>Warning: Removed 86 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/siderdata_intial.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>
+    Spearman&#39;s rank correlation rho
+
+data:  adr_se$se_adr and (adr_se$freq)
+S = 395270000, p-value = 7.911e-12
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+       rho 
+-0.1912599 </code></pre>
+<pre><code>`geom_smooth()` using method = &#39;gam&#39; and formula &#39;y ~ s(x, bs = &quot;cs&quot;)&#39;</code></pre>
+<p><img src="figure/siderdata_intial.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="match-icd-to-phecodes-and-get-adr-phecode-score" class="section level3">
 <h3>Match ICD to Phecodes and get ADR phecode score</h3>
@@ -986,31 +1033,32 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] DT_0.13           kableExtra_1.1.0  dplyr_0.8.3       ggplot2_3.2.1    
-[5] xlsx_0.6.1        stringr_1.4.0     data.table_1.12.2
+[1] scales_1.0.0      DT_0.13           kableExtra_1.1.0  dplyr_0.8.3      
+[5] ggplot2_3.2.1     xlsx_0.6.1        stringr_1.4.0     data.table_1.12.2
 
 loaded via a namespace (and not attached):
- [1] tidyselect_0.2.5  xfun_0.9          reshape2_1.4.3   
- [4] purrr_0.3.2       rJava_0.9-11      colorspace_1.4-1 
- [7] vctrs_0.2.0       htmltools_0.3.6   viridisLite_0.3.0
-[10] yaml_2.2.0        rlang_0.4.0       R.oo_1.22.0      
-[13] later_0.8.0       pillar_1.4.2      glue_1.3.1       
-[16] withr_2.1.2       R.utils_2.9.0     plyr_1.8.4       
-[19] munsell_0.5.0     gtable_0.3.0      workflowr_1.6.1  
-[22] R.methodsS3_1.7.1 rvest_0.3.5       htmlwidgets_1.3  
-[25] evaluate_0.14     labeling_0.3      knitr_1.24       
-[28] crosstalk_1.0.0   httpuv_1.5.1      xlsxjars_0.6.1   
-[31] Rcpp_1.0.2        xtable_1.8-4      readr_1.3.1      
-[34] promises_1.0.1    scales_1.0.0      backports_1.1.4  
-[37] jsonlite_1.6      webshot_0.5.1     mime_0.7         
-[40] fs_1.3.1          hms_0.5.1         digest_0.6.20    
-[43] stringi_1.4.3     shiny_1.3.2       grid_3.5.3       
-[46] rprojroot_1.3-2   tools_3.5.3       magrittr_1.5     
-[49] lazyeval_0.2.2    tibble_2.1.3      crayon_1.3.4     
-[52] whisker_0.4       pkgconfig_2.0.2   zeallot_0.1.0    
-[55] xml2_1.2.2        assertthat_0.2.1  rmarkdown_1.15   
-[58] httr_1.4.1        rstudioapi_0.10   R6_2.4.0         
-[61] git2r_0.26.1      compiler_3.5.3   </code></pre>
+ [1] Rcpp_1.0.2        lattice_0.20-38   xlsxjars_0.6.1   
+ [4] assertthat_0.2.1  zeallot_0.1.0     rprojroot_1.3-2  
+ [7] digest_0.6.20     mime_0.7          plyr_1.8.4       
+[10] R6_2.4.0          backports_1.1.4   evaluate_0.14    
+[13] httr_1.4.1        pillar_1.4.2      rlang_0.4.0      
+[16] lazyeval_0.2.2    rstudioapi_0.10   whisker_0.4      
+[19] R.utils_2.9.0     R.oo_1.22.0       Matrix_1.2-17    
+[22] rmarkdown_1.15    labeling_0.3      splines_3.5.3    
+[25] webshot_0.5.1     readr_1.3.1       htmlwidgets_1.3  
+[28] munsell_0.5.0     shiny_1.3.2       compiler_3.5.3   
+[31] httpuv_1.5.1      xfun_0.9          pkgconfig_2.0.2  
+[34] mgcv_1.8-28       htmltools_0.3.6   tidyselect_0.2.5 
+[37] tibble_2.1.3      workflowr_1.6.1   viridisLite_0.3.0
+[40] crayon_1.3.4      withr_2.1.2       later_0.8.0      
+[43] R.methodsS3_1.7.1 grid_3.5.3        nlme_3.1-141     
+[46] jsonlite_1.6      xtable_1.8-4      gtable_0.3.0     
+[49] git2r_0.26.1      magrittr_1.5      stringi_1.4.3    
+[52] reshape2_1.4.3    fs_1.3.1          promises_1.0.1   
+[55] xml2_1.2.2        vctrs_0.2.0       tools_3.5.3      
+[58] glue_1.3.1        purrr_0.3.2       hms_0.5.1        
+[61] crosstalk_1.0.0   yaml_2.2.0        colorspace_1.4-1 
+[64] rvest_0.3.5       rJava_0.9-11      knitr_1.24       </code></pre>
 </div>
 </div>
 
