@@ -10,5 +10,5 @@ editor_options:
 
 Welcome to my research website.
 
-Click on this [link](file:///Users/aineduffy/Documents/PhD/DrugGenetics/DG_WF/docs/siderdata_intial.html) to see side effect results.
+Click on this [link](https://aineduffy.github.io/DG_WF/siderdata_intial.html) to see side effect results.
 
