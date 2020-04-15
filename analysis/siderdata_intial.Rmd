@@ -19,6 +19,7 @@ library(ggplot2)
 library(dplyr)
 library(kableExtra)
 library(DT)
+library(scales)
 ```
 
 ### Overview of dataset 
@@ -116,6 +117,7 @@ se_icd$se_adr1=adr$Rank.score[match(se_icd$medra_se, adr$Name)]
 se_icd$se_adr2=adr$Rank.score[match(se_icd$se, adr$Name)]
 se_icd$se_adr<-ifelse(!is.na(se_icd$se_adr1), se_icd$se_adr1, se_icd$se_adr2)
 se_icd=se_icd[c(-5,-6)]
+
 paste(length(unique(se_icd$medra_se[!is.na(se_icd$se_adr)])), 'out of', length(unique(se_icd$medra_se)), 'unique se have a adr score')
 ## "1258 out of 1342 unique se have a adr score"
 drugadr=se_icd  %>% select(drugname, medra_se, se_adr) %>% distinct()
@@ -123,7 +125,24 @@ drugadr=se_icd  %>% select(drugname, medra_se, se_adr) %>% distinct()
 drug1=drugadr %>% group_by(drugname) %>% summarise(total.no_adr=n(), meanadr=mean(se_adr, na.rm=T), sd=sd(se_adr, na.rm = T))
 DT::datatable(drug1)
 summary(drug1[-1])
-  
+
+adr_se=se_icd %>% select(medra_se,se_adr) %>% distinct()
+
+ggplot(adr_se, aes(x=se_adr))+ geom_histogram(bins = 10, color="black", fill="light blue") +
+  labs(x='ADR',y='Side effect', title='Distrubution of ADR scores') +
+  theme_classic()
+
+setab$medra_se=str_to_lower(setab$medra_se)
+adr_se$freq=setab$n[match(adr_se$medra_se, setab$medra_se)]
+adr_se=adr_se[!is.na(adr_se$se_adr),]  
+#proportion of drugs, divide by 994 
+
+adr_se$freq=adr_se$freq/994
+cor_sp=cor.test(adr_se$se_adr, (adr_se$freq), method = 'spearman', exact=F)
+cor_sp
+ggplot(adr_se, aes(x=se_adr,y=freq))+geom_point()+ geom_smooth() +labs(x='ADR score', y='Se freq', title = 'Correlation between adr score and se frequency') + annotate("text",color='red', x = .86, y = .725, label = paste('spearman coefficient =', round(cor_sp$estimate,4), '\n', 'P value = ',  scientific(cor_sp$p.value, digits = 3))) +  theme_classic() 
+#generalized additive mode smoothing. #used spearmans correlation becuase side effect freq not normally distrubted
+
 ```
 
 ### Match ICD to Phecodes and get ADR phecode score
