@@ -101,10 +101,10 @@ ggplot(mitab, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="ligh
 
 
 ```
-### Filter SE
-#### 1. Remove se for drugs where se==mi. Used both umls label and medra se cui 
-#### 2. How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
-#### 3. How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+### Filter SE.
+##### 1. Remove se for drugs where se==mi. Used both umls label and medra se cui 
+##### 2. How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+##### 3. How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
 ```{r, echo=F}
 
 #1) Remove se for drugs ==mi. used both umls label and medra se
@@ -141,7 +141,7 @@ setabdrug=as.data.frame(se_table_matchmiremoved %>%
   arrange(desc(n)))
 
 drug.greater10=setabdrug[setabdrug$n>length(unique(se_table_matchmiremoved$medra_se))/10,]
-print(paste(nrow(drug.greater10),'out of',length(unique(se_table_matchmiremoved$drugname)), 'drugs observed with > 10% of',length(unique(se_table_matchmiremoved$medra_se)),' unique se'))
+print(paste(nrow(drug.greater10),'out of',length(unique(se_table_matchmiremoved$drugname)), 'drugs observed with > 10% of',length(unique(se_table_matchmiremoved$medra_se)),'unique se'))
 
 
 ```
@@ -154,9 +154,9 @@ icd_cui=icd_cui %>% filter(V12=='ICD10CM',V2=='ENG' ) %>% distinct(V1,V11) %>% r
 se_icd=merge(se_table_matchmiremoved, icd_cui, by='umls_medra')
 colnames(se_icd)=gsub('ICD10','ICD10_SE', colnames(se_icd))
 
-print(paste('There are ',length(unique(se_icd$drugname)), 'unique drugs with se that match to ICD10' ))
-print(paste('There are ',length(unique(se_icd$medra_se)), 'unique se' ))
-print(paste('There are ',length(unique(se_icd$ICD10_SE)), 'unique ICD codes' ))
+print(paste('There are',length(unique(se_icd$drugname)), 'unique drugs with se that match to ICD10' ))
+print(paste('There are',length(unique(se_icd$medra_se)), 'unique se' ))
+print(paste('There are',length(unique(se_icd$ICD10_SE)), 'unique ICD codes' ))
 ``` 
 
 #### some se have mutliple icd10 codes
@@ -169,7 +169,7 @@ head(se1)
 setab_icd=se_icd %>% select(drugname, medra_se,ICD10_SE) %>% distinct() %>% 
  group_by(medra_se,ICD10_SE) %>% tally() %>%
   arrange(desc(n))
-print(paste('There are ',length(unique(se1$medra_se)), 'unique medra_se with duplicate ICD10 codes' ))
+print(paste('There are',length(unique(se1$medra_se)), 'unique medra_se with duplicate ICD10 codes' ))
 
  
 ###Side effect frequency for each drug once match to icd
@@ -184,7 +184,6 @@ ggplot(setab_icd, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="
 ```
 
 ### Filter SE after match to ICD10 codes. 
-#### Less SE 
 #### 1. How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
 #### 2. How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
 ```{r, echo=F}
