@@ -23,14 +23,14 @@ library(scales)
 ```
 
 ### Overview of dataset 
-``` {r, echo=F, message=T}
+``` {r, echo=F}
 se=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/meddra_adverse_effects.tsv.gz',data.table=F)
 colnames(se)=c('stich1','stich2','umls_onlabel','drugname','se','medra_concepttype','umls_medra','medra_se')
 head(se)
 print(paste('There are ',length(unique(se$drugname)), 'unique drugs with se' ))
 print(paste('There are ',length(unique(se$medra_se)), 'unique se' ))
 se=se[which(se$medra_concepttype=='PT'),]
-print(paste('There are ',length(unique(se$drugname)), 'unique drugs with se' ))
+print(paste('There are ',length(unique(se$drugname)), 'unique drugs with PT se' ))
 print(paste('There are ',length(unique(se$medra_se)), 'unique PT se' ))
 ```
 #### Taking just preferred term 'PT' side effects
@@ -38,8 +38,8 @@ print(paste('There are ',length(unique(se$medra_se)), 'unique PT se' ))
 
 #996 drugs 
 #4492 UNIQUE SE. #3209 PT
-se_table=se[c(4,8)][!duplicated(se[c(4,8)]),]
-setab=as.data.frame(se_table %>% 
+se_table=se[c(4,7,8)][!duplicated(se[c(4,7,8)]),]
+setab=as.data.frame(se_table %>% select(drugname, medra_se) %>%
  group_by(medra_se) %>% tally() %>%
   arrange(desc(n)))
 
@@ -55,14 +55,105 @@ ggplot(setab, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="ligh
 
 ```
 
+### Main Indications
+
+```{r, echo =F}
+mi=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/indications_raw.tsv.gz', data.table=F, header=F)
+colnames(mi)=c('label_identifier','cui','mi')
+
+label=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/label_mapping.tsv', data.table=F)
+colnames(label)=c('drugname','brandrugname','markermapped','stich_id','stich_id1','url','label_identifier')
+
+label1=as.data.frame(do.call(rbind, apply(label[c(2,7)],1,function(X){
+	do.call(expand.grid, strsplit(X, ';',useBytes = TRUE))
+}
+	)))
+
+label2=merge(label1,label[c(1,7)], by='label_identifier',all=T)
+label3=label2[!duplicated(label2),]
+label3$brandrugname=str_to_lower(label3$brandrugname)
+label3$drugname=str_to_lower(label3$drugname)
+colnames(label3)=c('label_identifier','drugname','drugname')
+label4=rbind(label3[c(1,2)], label3[c(1,3)])
+label4=label4[!duplicated(label4),] #72258 rows
+
+mi_label=inner_join(mi, label4, by='label_identifier')
+mi_label$mi=str_to_lower(mi_label$mi)
+mi_label1=mi_label[-1]
+mi_label1=mi_label1[!duplicated(mi_label1),]
+colnames(mi_label1)[1]='cui_mi'
+#65573 line
+paste(length(unique(mi_label1$drugname)),'unique drugs with', length(unique(mi_label1$cui)), 'unique main indications')
+
+#Drug frequency for main indications
+mitab=as.data.frame(mi_label1 %>% 
+ group_by(mi) %>% tally() %>%
+  arrange(desc(n)))
+DT::datatable(mitab,caption = 'Table 2: Main indication frequency in Sider', filter='top',colnames=c('Main indication','Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy','csvHtml15','excel'))
+
+summary(mitab$n)
+
+ggplot(mitab, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Main indication frequency',y='Number of drugs', title='Main indication frequency across SIDER2') +
+  theme_classic()
+
+
+
+
+```
+### Filter SE
+#### 1. Remove se for drugs where se==mi. Used both umls label and medra se cui 
+#### 2. How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+#### 3. How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+```{r, echo=F}
+
+#1) Remove se for drugs ==mi. used both umls label and medra se
+drugs_se_main=inner_join(se[c(-1,-2,-6)],mi_label1, by='drugname')
+#784 drugs which have mi and se
+paste(length(unique(drugs_se_main$drugname)), 'drugs have se and mi info.', length(unique(drugs_se_main$medra_se)), 'unique se and',length(unique(drugs_se_main$mi)), 'unique mi' )
+#drugs_se_main=drugs_se_main[!duplicated(drugs_se_main),]
+matchse_mi1=drugs_se_main[which(drugs_se_main$cui_mi==drugs_se_main$umls_medra|drugs_se_main$cui_mi==drugs_se_main$umls_onlabel),]
+head(matchse_mi1)
+paste(length(unique(matchse_mi1$drugname)), 'drugs with exact cui match for mi = se')
+
+
+#matches removed
+remove.matchse_mi=drugs_se_main[which(drugs_se_main$cui_mi!=drugs_se_main$umls_medra|drugs_se_main$cui_mi!=drugs_se_main$umls_onlabel),]
+
+se_table_matchmiremoved=remove.matchse_mi[c(1:5)][!duplicated(remove.matchse_mi[c(1:5)]),]
+setab=as.data.frame(se_table_matchmiremoved %>% select(drugname, medra_se) %>% distinct() %>%
+ group_by(medra_se) %>% tally() %>%
+  arrange(desc(n)))
+
+DT::datatable(setab,caption = 'Table 3: Side effect frequency in Sider for drugs with main indication info', filter='top',colnames=c('Side effects','Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy','csvHtml15','excel'))
+
+#1) How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+se.greater10=setab[setab$n>length(unique(se_table_matchmiremoved$drugname))/10,]
+print(paste(nrow(se.greater10),'out of',length(unique(se_table_matchmiremoved$medra_se)),'unique side effects observed in > 10% of',length(unique(se_table_matchmiremoved$drugname)),'drugs')) 
+
+#2) How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+#drugs.wse.greater10=subset(se_table_matchmiremoved, (medra_se %in% se.greater10$medra_se))
+#paste(length(unique(drugs.wse.greater10$drugname)), 'out of', length(unique(se_table_matchmiremoved$drugname)), 'drugs had a se that had > 10% frequency')
+
+#drugs with more than >10% side effects?
+setabdrug=as.data.frame(se_table_matchmiremoved %>% 
+ group_by(drugname) %>% tally() %>%
+  arrange(desc(n)))
+
+drug.greater10=setabdrug[setabdrug$n>length(unique(se_table_matchmiremoved$medra_se))/10,]
+print(paste(nrow(drug.greater10),'out of',length(unique(se_table_matchmiremoved$drugname)), 'drugs observed with > 10% of',length(unique(se_table_matchmiremoved$medra_se)),' unique se'))
+
+
+```
+
 ### Match side effects to ICD10 codes 
 ```{r, echo=F}
 ###Side effects matched to ICD10 codes
 icd_cui=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/MRCONSO.RRF.txt',data.table=F, quote='')
 icd_cui=icd_cui %>% filter(V12=='ICD10CM',V2=='ENG' ) %>% distinct(V1,V11) %>% rename(umls_medra=V1,ICD10=V11)
-se_icd=merge(se, icd_cui, by='umls_medra')
+se_icd=merge(se_table_matchmiremoved, icd_cui, by='umls_medra')
 colnames(se_icd)=gsub('ICD10','ICD10_SE', colnames(se_icd))
-se_icd=se_icd[c(5,6,8,9)]
+
 print(paste('There are ',length(unique(se_icd$drugname)), 'unique drugs with se that match to ICD10' ))
 print(paste('There are ',length(unique(se_icd$medra_se)), 'unique se' ))
 print(paste('There are ',length(unique(se_icd$ICD10_SE)), 'unique ICD codes' ))
@@ -82,7 +173,7 @@ print(paste('There are ',length(unique(se1$medra_se)), 'unique medra_se with dup
 
  
 ###Side effect frequency for each drug once match to icd
-DT::datatable(setab_icd, caption = 'Table 2: Side effect frequency in Sider matched to ICD10 code',filter='top', colnames=c('Side effects','ICD10'  ,'Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy'))
+DT::datatable(setab_icd, caption = 'Table 4: Side effect frequency in Sider matched to ICD10 code',filter='top', colnames=c('Side effects','ICD10'  ,'Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy'))
 
 ####Side effect frequency summary
 
@@ -91,6 +182,31 @@ ggplot(setab_icd, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="
   labs(x='Side effect frequency',y='Frequency', title='Side effect frequency which match to ICD10 codes') +
   theme_classic()
 ```
+
+### Filter SE after match to ICD10 codes. 
+#### Less SE 
+#### 1. How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+#### 2. How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+```{r, echo=F}
+#1) How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+se_icd.greater10=setab_icd[setab_icd$n>length(unique(se_icd$drugname))/10,]
+print(paste(nrow(se_icd.greater10),'out of',length(unique(se_icd$medra_se)),'unique side effects observed in > 10% of',length(unique(se_icd$drugname)),'drugs')) 
+
+#2) How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+#drugs_icd.wse.greater10=subset(se_icd, (medra_se %in% se_icd.greater10$medra_se))
+#paste(length(unique(drugs_icd.wse.greater10$drugname)), 'out of', length(unique(se_icd$drugname)), 'drugs had a se that had > 10% frequency')
+
+#drugs with more than >10% side effects?
+seicdtabdrug=as.data.frame(se_icd %>% select(drugname, medra_se) %>%
+ group_by(drugname) %>% tally() %>%
+  arrange(desc(n)))
+
+drugicd.greater10=seicdtabdrug[seicdtabdrug$n>length(unique(se_icd$medra_se))/10,]
+print(paste(nrow(drugicd.greater10),'out of',length(unique(se_icd$drugname)), 'drugs observed with > 10% of',length(unique(se_icd$medra_se)),' unique se'))
+
+
+```
+
 
 #### Frequency of se per drugs
 
@@ -116,10 +232,10 @@ se_icd$se=str_to_lower(se_icd$se)
 se_icd$se_adr1=adr$Rank.score[match(se_icd$medra_se, adr$Name)]
 se_icd$se_adr2=adr$Rank.score[match(se_icd$se, adr$Name)]
 se_icd$se_adr<-ifelse(!is.na(se_icd$se_adr1), se_icd$se_adr1, se_icd$se_adr2)
-se_icd=se_icd[c(-5,-6)]
+se_icd=se_icd %>% select(-se_adr2, -se_adr1)
 
 paste(length(unique(se_icd$medra_se[!is.na(se_icd$se_adr)])), 'out of', length(unique(se_icd$medra_se)), 'unique se have a adr score')
-## "1258 out of 1342 unique se have a adr score"
+##"1205 out of 1276 unique se have a adr score"
 drugadr=se_icd  %>% select(drugname, medra_se, se_adr) %>% distinct()
 
 drug1=drugadr %>% group_by(drugname) %>% summarise(total.no_adr=n(), meanadr=mean(se_adr, na.rm=T), sd=sd(se_adr, na.rm = T))
@@ -135,9 +251,9 @@ ggplot(adr_se, aes(x=se_adr))+ geom_histogram(bins = 10, color="black", fill="li
 setab$medra_se=str_to_lower(setab$medra_se)
 adr_se$freq=setab$n[match(adr_se$medra_se, setab$medra_se)]
 adr_se=adr_se[!is.na(adr_se$se_adr),]  
-#proportion of drugs, divide by 994 
 
-adr_se$freq=adr_se$freq/994
+#proportion of drugs, divide by total no of drugs (784)
+adr_se$freq=adr_se$freq/length(unique(drugadr$drugname))
 cor_sp=cor.test(adr_se$se_adr, (adr_se$freq), method = 'spearman', exact=F)
 cor_sp
 ggplot(adr_se, aes(x=se_adr,y=freq))+geom_point()+ geom_smooth() +labs(x='ADR score', y='Se freq', title = 'Correlation between adr score and se frequency') + annotate("text",color='red', x = .86, y = .725, label = paste('spearman coefficient =', round(cor_sp$estimate,4), '\n', 'P value = ',  scientific(cor_sp$p.value, digits = 3))) +  theme_classic() 
@@ -198,5 +314,8 @@ print(paste('There are',length(unique(se_icd_gene$drugname)), 'unique drugs'))
 print(paste('There are',length(unique(se_icd_gene$entrez_id)), 'unique genes'))
 print(paste('There are',length(unique(se_icd_gene$medra_se)), 'unique se and out of these', length(unique(se_icd_gene$medra_se[!is.na(se_icd_gene$se_adr)])), 'has an adr score'))
 print(paste('There are',length(unique(se_icd_gene$PHECODE_SE)), 'unique phecodes and out of these', length(unique(se_icd_gene$PHECODE_SE[!is.na(se_icd_gene$se_adr)])), 'has an adr score'))
+
+
+####run with sider 4. Only did sider 2 becuase no adr score. now if imputing them can do with s4
 ```
 
