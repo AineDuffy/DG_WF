@@ -114,11 +114,12 @@ paste(length(unique(drugs_se_main$drugname)), 'drugs have se and mi info.', leng
 #drugs_se_main=drugs_se_main[!duplicated(drugs_se_main),]
 matchse_mi1=drugs_se_main[which(drugs_se_main$cui_mi==drugs_se_main$umls_medra|drugs_se_main$cui_mi==drugs_se_main$umls_onlabel),]
 head(matchse_mi1)
-paste(length(unique(matchse_mi1$drugname)), 'drugs with exact cui match for mi = se')
+paste(length(unique(matchse_mi1$drugname)), 'drugs atleast one exact cui match for mi = se')
 
 
 #matches removed
-remove.matchse_mi=drugs_se_main[which(drugs_se_main$cui_mi!=drugs_se_main$umls_medra|drugs_se_main$cui_mi!=drugs_se_main$umls_onlabel),]
+remove.matchse_mi=drugs_se_main[which(drugs_se_main$cui_mi!=drugs_se_main$umls_medra&drugs_se_main$cui_mi!=drugs_se_main$umls_onlabel),]
+
 
 se_table_matchmiremoved=remove.matchse_mi[c(1:5)][!duplicated(remove.matchse_mi[c(1:5)]),]
 setab=as.data.frame(se_table_matchmiremoved %>% select(drugname, medra_se) %>% distinct() %>%
@@ -290,6 +291,27 @@ Phefre1=melt(Phefre,id.var='phecode_category')
 ggplot(Phefre1, aes(x=phecode_category, y=value, fill=variable))+ geom_bar(stat = "identity",position='dodge') +theme_classic()+theme(axis.text.x = element_text(angle=-90)) + labs(x='Phecode cateogories', y='Number of side effects') 
 
 ```
+### Main Indications to ICD
+
+``` {r, echo=F}
+
+colnames(icd_cui)[1]='cui_mi'
+mi_label1$ICD10_MI=icd_cui$ICD10[match(mi_label1$cui_mi, icd_cui$umls_medra)]
+paste(length(unique(mi_label1$mi[!is.na(mi_label1$ICD10_MI)])), 'mi have ICD10 code')
+#1957 MI UNIQUE WITH ICD CODE FROM 2669
+
+mi_label1$PHECODE_MI=ICD$PHECODE[match(mi_label1$ICD10_MI,ICD$ICD10CM)] #11 ICD codes didnt match to phecode
+mi_label1$PHECODE_DESC_MI=ICD$PHECODE_DESC[match(mi_label1$ICD10_MI, ICD$ICD10CM)]
+#mi_icd1=mi_icd1[c(3,5,6,7,8)]
+#mi_icd1=mi_icd1[!duplicated(mi_icd1),]
+
+se_mi=inner_join(se_icd, mi_label1, by='drugname')
+
+
+
+
+```
+
 
 ### Match to entrez id  
 
@@ -316,5 +338,7 @@ print(paste('There are',length(unique(se_icd_gene$PHECODE_SE)), 'unique phecodes
 
 
 ####run with sider 4. Only did sider 2 becuase no adr score. now if imputing them can do with s4
+
+##map se and mi both to icd and then remove matching
 ```
 
