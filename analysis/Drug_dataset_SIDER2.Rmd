@@ -183,7 +183,7 @@ Byphecode2<-lapply(c(se_phecodes), function(se){
  drug_info_one_al2=drug_info_one_al2
 })
 Byphecode2<-do.call('rbind',Byphecode2)  
-head(Byphecode2)
+paste(length(unique(Byphecode2$PheCode)))
 lapply(Byphecode2[c(5:7)], function(x) summary(as.factor(x)))
 #replaced all na for 0
 Byphecode3=Byphecode2
@@ -205,9 +205,10 @@ summary(se_predictbyomim)$coefficient
 
 #Dataset- 589 unique drugs X 672 unique SE
 #395,808 lines  
- 
+
+head(se_phecodes)
 Byphecode_agggregategene<-lapply(c(se_phecodes), function(se){
-  cat(paste(se,'\n'))
+ # cat(paste(se,'\n'))
   dataset_phecode=dataset_by_phecode[which(dataset_by_phecode$PHECODE_SE==se),]
   drug_info$PheCode=se
   drug_info_one_all=merge(drug_info,dataset_phecode, by= paste(colnames(drug_info[-4])),all=T)
@@ -219,7 +220,7 @@ Byphecode_agggregategene<-lapply(c(se_phecodes), function(se){
    drug_info_one_all3=aggregate(.~drugname, drug_info_one_all[c(-2,-3,-4)], sum)
    drug_info_one_all3$Phecode=se
    drug_info_one_all3[c(-1,-5)][drug_info_one_all3[c(-1,-5)]>1]<-1
-    cat(paste(nrow(drug_info_one_all3)),'\n')
+  #  cat(paste(nrow(drug_info_one_all3)),'\n')
  drug_info_one_all3=drug_info_one_all3
 })
 Byphecode_agggregategene<-do.call('rbind',Byphecode_agggregategene)  
