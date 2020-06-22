@@ -24,7 +24,13 @@ library(lme4)
 ```
 
 ### Overview of dataset 
-#### Drug dataset with target genes, sider V2 se matched to phecode, se adr score, omim matched to phecode, coloc tissue and phenotype matched to phecode at pph4 >08, Tau and OE score 
+Drug dataset:
+- target genes
+- sider V2 se matched to phecode
+- se adr score
+- omim matched to phecode
+- coloc tissue and phenotype matched to phecode at pph4 >08
+- Tau and OE score 
 ``` {r, echo=F}
 dataset=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data/Dataset/drug_sider2_omim_tau_coloc.txt',data.table=F)
 head(dataset)
@@ -66,23 +72,23 @@ ggplot(allphecode, aes(x=phecode, fill=source)) +geom_histogram(bins=40) + facet
 
 ```
 
-####Average drug
+### Data descriptives 
 ``` {r, echo=F}
 #number of genes
-genedist=dataset %>% group_by(drugname) %>% distinct(entrez_id) %>% tally()
+genedist=dataset %>% group_by(drugname) %>% distinct(entrez_id) %>% tally(name='gene.no')
 
-plt1=ggplot(genedist, aes(x=n))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
+plt1=ggplot(genedist, aes(x=gene.no))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
   labs(x='Number of gene targets',y='Number of drugs', title='Number of gene targets for drugs in dataset') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 15, y = 300, label = paste('mean number of', '\n', 'gene targets =', round(mean(genedist$n),2)))
+ geom_vline(aes(xintercept = mean(gene.no)),col='red',size=1) + annotate("text",color='red', x = 15, y = 300, label = paste('mean number of', '\n', 'gene targets =', round(mean(genedist$gene.no),2)))
   
 #number of se
-meanse=dataset %>% filter(!is.na(PHECODE_SE)) %>% group_by(drugname) %>% distinct(PHECODE_SE) %>% tally()
+meanse=dataset %>% filter(!is.na(PHECODE_SE)) %>% group_by(drugname) %>% distinct(PHECODE_SE) %>% tally(name='se.no')
 
-plt2=ggplot(meanse, aes(x=n))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
+plt2=ggplot(meanse, aes(x=se.no))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
   labs(x='Number of phecode se',y='Number of drugs', title='Number of phecode se per drug in dataset') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 26, y = 130, label = paste('mean number of', '\n', 'phecode se =', round(mean(meanse$n),2)))
+ geom_vline(aes(xintercept = mean(se.no)),col='red',size=1) + annotate("text",color='red', x = 26, y = 130, label = paste('mean number of', '\n', 'phecode se =', round(mean(meanse$se.no),2)))
 
 #mean tau
 meantau=dataset %>% group_by(drugname) %>% distinct(Tau) %>% summarise(mean_tau=mean(Tau, na.rm=T))
@@ -102,61 +108,72 @@ plt4=ggplot(meanoe, aes(x=mean_oe))+ geom_histogram(bins = 30, color="black", fi
  geom_vline(aes(xintercept = mean(mean_oe, na.rm = T)),col='red',size=1) + annotate("text",color='red', x = 1, y = 50, label = paste('mean oe =', round(mean(meanoe$mean_oe, na.rm = T),2)))
 
 #number of omim phecodes  
-meanomim=dataset %>% filter(!is.na(omim_phecode)) %>% group_by(drugname) %>% distinct(omim_phecode) %>% tally()
+meanomim=dataset %>% filter(!is.na(omim_phecode)) %>% group_by(drugname) %>% distinct(omim_phecode) %>% tally(name='omim.no')
 
-plt5=ggplot(meanomim, aes(x=n))+ geom_histogram(binwidth = 1, color="black", fill="light blue") +
+plt5=ggplot(meanomim, aes(x=omim.no))+ geom_histogram(binwidth = 1, color="black", fill="light blue") +
   labs(x='Number of phecode omim phenotypes',y='Number of drugs', title='Number of phecode omim phenotypes per drug in dataset') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 6, y = 270, label = paste('mean number of phecode', '\n', ' omim phenotypes=', round(mean(meanomim$n),2)))
+ geom_vline(aes(xintercept = mean(omim.no)),col='red',size=1) + annotate("text",color='red', x = 6, y = 270, label = paste('mean number of phecode', '\n', ' omim phenotypes=', round(mean(meanomim$omim.no),2)))
 
 #Number of genes which had NA for omim
-missingomim=dataset %>% distinct(drugname, entrez_id, omim_phecode) %>% filter(is.na(omim_phecode)) %>% group_by(drugname) %>% tally()
+missingomim=dataset %>% distinct(drugname, entrez_id, omim_phecode) %>% filter(is.na(omim_phecode)) %>% group_by(drugname) %>% tally(name='no_omim_genes.no')
 
-plt6=ggplot(missingomim, aes(x=n))+ geom_histogram(binwidth = 1, color="black", fill="light blue") +
+plt6=ggplot(missingomim, aes(x=no_omim_genes.no))+ geom_histogram(binwidth = 1, color="black", fill="light blue") +
   labs(x='Number of genes with NA for omim',y='Number of drugs', title='Number of genes which had NA for omim') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 13, y = 150, label = paste('mean number of','\n', 'genes =', round(mean(missingomim$n),2)))
+ geom_vline(aes(xintercept = mean(no_omim_genes.no)),col='red',size=1) + annotate("text",color='red', x = 13, y = 150, label = paste('mean number of','\n', 'genes =', round(mean(missingomim$no_omim_genes.no),2)))
 
 
 
 #number of coloc phecodes 
 
-meancolocpheno=dataset %>% filter(!is.na(coloc08_phecode)) %>% group_by(drugname) %>% distinct(coloc08_phecode) %>% tally()
+meancolocpheno=dataset %>% filter(!is.na(coloc08_phecode)) %>% group_by(drugname) %>% distinct(coloc08_phecode) %>% tally(name='colocpheno.no')
 
-plt7=ggplot(meancolocpheno, aes(x=n))+ geom_histogram(binwidth = 10, color="black", fill="light blue") +
+plt7=ggplot(meancolocpheno, aes(x=colocpheno.no))+ geom_histogram(binwidth = 10, color="black", fill="light blue") +
   labs(x='Number of phecode coloc2 phenotypes',y='Number of drugs', title='Number of phecode coloc2  phenotypes per drug in dataset') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 170, y = 85, label = paste('mean number of phecode ', '\n', 'coloc2 phenotypes =', round(mean(meancolocpheno$n),2)))
+ geom_vline(aes(xintercept = mean(colocpheno.no)),col='red',size=1) + annotate("text",color='red', x = 170, y = 85, label = paste('mean number of phecode ', '\n', 'coloc2 phenotypes =', round(mean(meancolocpheno$colocpheno.no),2)))
 
-meancolocphenotissue=dataset %>% group_by(coloc08_phecode) %>% distinct(Tissue) %>% tally()
+meancolocphenotissue=dataset %>% group_by(coloc08_phecode) %>% distinct(Tissue) %>% tally(name='coloctissue.no')
 
-plt8=ggplot(meancolocphenotissue, aes(x=n))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
+plt8=ggplot(meancolocphenotissue, aes(x=coloctissue.no))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
   labs(x='Number of tissues that match to coloc2 phecode',y='Number of Tissues', title='Number of tissues mapped to coloc2 phenotypes') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 37,y  = 100, label = paste('mean number of tissues  ', '\n', 'per coloc phecode =', round(mean(meancolocphenotissue$n),2)))
+ geom_vline(aes(xintercept = mean(coloctissue.no)),col='red',size=1) + annotate("text",color='red', x = 37,y  = 100, label = paste('mean number of tissues  ', '\n', 'per coloc phecode =', round(mean(meancolocphenotissue$coloctissue.no),2)))
 
 #Number of genes per drug which had NA for coloc
-missingcoloc=dataset %>% distinct(drugname, entrez_id, coloc08_phecode) %>% filter(is.na(coloc08_phecode)) %>% group_by(drugname) %>% tally()
+missingcoloc=dataset %>% distinct(drugname, entrez_id, coloc08_phecode) %>% filter(is.na(coloc08_phecode)) %>% group_by(drugname) %>% tally(name='no_coloc_genes.no')
 
-plt9=ggplot(missingcoloc, aes(x=n))+ geom_histogram(binwidth = 1, color="black", fill="light blue") +
+plt9=ggplot(missingcoloc, aes(x=no_coloc_genes.no))+ geom_histogram(binwidth = 1, color="black", fill="light blue") +
   labs(x='Number of genes with NA for coloc',y='Number of drugs', title='Number of genes per drug which had NA for coloc') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(n)),col='red',size=1) + annotate("text",color='red', x = 3, y = 120, label = paste('mean number of','\n', 'genes =', round(mean(missingcoloc$n),2)))
+ geom_vline(aes(xintercept = mean(no_coloc_genes.no)),col='red',size=1) + annotate("text",color='red', x = 3, y = 120, label = paste('mean number of','\n', 'genes =', round(mean(missingcoloc$no_coloc_genes.no),2)))
 
 
 grid.arrange(plt1,plt3,plt4)
 grid.arrange(plt2,plt7,plt5)
 grid.arrange(plt6,plt9,plt8)
 
+descriptive_table=cbind.data.frame('No of drugs'=length(unique(dataset$drugname)),
+                                   'Average no. genes'=mean(genedist$gene.no))
+
+descriptive_table=rbind.data.frame('Drug gene targets'=cbind.data.frame(Unique_Number=paste(length(unique(dataset$entrez_id))), Mean=mean(genedist$gene.no), Std=sd(genedist$gene.no)),
+                                   'Tau'=cbind.data.frame(Unique_Number=paste('-'), Mean=mean(meantau$mean_tau), Std=sd(meantau$mean_tau)),
+                                   'Constraint'=cbind.data.frame(Unique_Number=paste('-'), Mean=mean(meanoe$mean_oe,na.rm  =T), Std=sd(meanoe$mean_oe,na.rm  =T)),
+                                   'Side effect'=cbind.data.frame(Unique_Number=paste(length(unique(dataset$PHECODE_SE))), Mean=mean(meanse$se.no), Std=sd(meanse$se.no)),
+                                   'Omim'=cbind.data.frame(Unique_Number=paste(length(unique(dataset$omim_phecode))), Mean=mean(meanomim$omim.no), Std=sd(meanomim$omim.no)),
+                                   'Coloc Phenotype'=cbind.data.frame(Unique_Number=paste(length(unique(dataset$coloc08_phecode))), Mean=mean(meancolocpheno$colocpheno.no), Std=sd(meancolocpheno$colocpheno.no))
+                                   )
+descriptive_table
+
 ```
 
-#### Dataset for model
-##### 1. Dataset- 589 unique drugs. 2933 unique drug-gene pairs X 672 unique SE = 1,970,976 lines
+### Dataset for model
+1. Dataset - 589 unique drugs. 2933 unique drug-gene pairs X 672 unique SE = 1,970,976 lines
 
 ``` {r, echo=F}
 
 se_phecodes=unique(dataset$PHECODE_SE)
-se_phecodes=head(unique(dataset$PHECODE_SE))
 
 dataset1=dataset[c(-9,-11)]
 drug_info=dataset[c(1:3)]
@@ -183,22 +200,50 @@ Byphecode2<-lapply(c(se_phecodes), function(se){
  drug_info_one_al2=drug_info_one_al2
 })
 Byphecode2<-do.call('rbind',Byphecode2)  
-paste(length(unique(Byphecode2$PheCode)))
+#paste(length(unique(Byphecode2$PheCode)))
+head(Byphecode2)
+print('0 if gene doesnt match phecode se. NA if omim or coloc never reported gene')
 lapply(Byphecode2[c(5:7)], function(x) summary(as.factor(x)))
 #replaced all na for 0
 Byphecode3=Byphecode2
 Byphecode3[is.na(Byphecode3)]<-0
+
 lapply(Byphecode3[c(5:7)], function(x) summary(as.factor(x)))
 
-se_predictbycoloc=glmer(PHECODE_SE~coloc08_phecode+(1|PheCode), data = Byphecode3, family = 'binomial')
-summary(se_predictbycoloc)$coefficient
+print('Number of phecode se, coloc and omim matches per drug-gene pair')
+ descriptivetable2druggene=Byphecode3%>% group_by(drugname,entrez_id) %>% summarise(total_se=sum(PHECODE_SE), total_coloc=sum(coloc08_phecode), total_omim=sum(omim_phecode))
+head(descriptivetable2druggene)
+  descriptivetable2=lapply(c('se','coloc','omim'), function(x){
+   column=paste0('total_',x)
+   table=rbind.data.frame(x=cbind.data.frame(total=sum(descriptivetable2druggene[[column]]),
+                                                                           percentage=round(sum((descriptivetable2druggene[[column]])/nrow(Byphecode3)*100),2),
+                                                                           Mean=round(mean(descriptivetable2druggene[[column]]),2),
+                                                                           Std=round(sd(descriptivetable2druggene[[column]]),2)))
+   rownames(table)=paste(x, 'phecode trait per DG pair')
+      table                    
+ })
 
-se_predictbyomim=glmer(PHECODE_SE~omim_phecode+(1|PheCode), data = Byphecode3, family = 'binomial')
-summary(se_predictbyomim)$coefficient
-
+descriptivetable2<-do.call('rbind',descriptivetable2)
+descriptivetable2
 ```
-##### 2. Dataset - 589 unique drugs X 672 unique SE = 395,808 lines
+ 1.logistic model
+ 2.mixed model
+```{r}
+logmod_coloc=glm(PHECODE_SE~coloc08_phecode, data = Byphecode3, family = 'binomial')
+summary(logmod_coloc)
+logmod_omim=glm(PHECODE_SE~omim_phecode, data = Byphecode3, family = 'binomial')
+summary(logmod_omim)
 
+se_predictbycoloc=glmer(PHECODE_SE~coloc08_phecode+(1|PheCode), data = Byphecode3, family = 'binomial')
+summary(se_predictbycoloc)
+se_predictbyomim=glmer(PHECODE_SE~omim_phecode+(1|PheCode), data = Byphecode3, family = 'binomial')
+summary(se_predictbyomim)
+
+multi=glm(PHECODE_SE~coloc08_phecode+omim_phecode, data = Byphecode3, family = 'binomial')
+summary(multi)
+```
+2. Dataset - 589 unique drugs X 672 unique SE = 395,808 lines
+All genes aggregated per drug
 ``` {r, echo=F}
 
 ##group all genes togther 
@@ -206,7 +251,6 @@ summary(se_predictbyomim)$coefficient
 #Dataset- 589 unique drugs X 672 unique SE
 #395,808 lines  
 
-head(se_phecodes)
 Byphecode_agggregategene<-lapply(c(se_phecodes), function(se){
  # cat(paste(se,'\n'))
   dataset_phecode=dataset_by_phecode[which(dataset_by_phecode$PHECODE_SE==se),]
@@ -224,14 +268,40 @@ Byphecode_agggregategene<-lapply(c(se_phecodes), function(se){
  drug_info_one_all3=drug_info_one_all3
 })
 Byphecode_agggregategene<-do.call('rbind',Byphecode_agggregategene)  
-
+head(Byphecode_agggregategene)
 lapply(Byphecode_agggregategene[c(2:4)], function(x) summary(as.factor(x)))
 
+print('Number of unique phecode se, coloc and omim matches per drug')
+
+descriptivetable2druggene2=Byphecode_agggregategene%>% group_by(drugname) %>% summarise(total_se=sum(PHECODE_SE), total_coloc=sum(coloc08_phecode), total_omim=sum(omim_phecode))
+head(descriptivetable2druggene2)
+ 
+ descriptivetable_perdrug=lapply(c('se','coloc','omim'), function(x){
+   column=paste0('total_',x)
+   table=rbind.data.frame(x=cbind.data.frame(total=sum(descriptivetable2druggene2[[column]]),                                                                           percentage=round(sum((descriptivetable2druggene2[[column]])/nrow(Byphecode_agggregategene)*100),2),
+                                                                           Mean=round(mean(descriptivetable2druggene2[[column]]),2),
+                                                                           Std=round(sd(descriptivetable2druggene2[[column]]),2)))
+   rownames(table)=paste(x, 'phecode trait per drug')
+      table                    
+ })
+
+descriptivetable_perdrug<-do.call('rbind',descriptivetable_perdrug)
+descriptivetable_perdrug
+```
+1.logistic model
+2.mixed model
+```{r}
+
+logmod_coloc_drug=glm(PHECODE_SE~coloc08_phecode, data = Byphecode_agggregategene, family = 'binomial')
+summary(logmod_coloc_drug)
+logmod_omim_drug=glm(PHECODE_SE~omim_phecode, data = Byphecode_agggregategene, family = 'binomial')
+summary(logmod_omim_drug)
+
 se_predictbycoloc_groupgene=glmer(PHECODE_SE~coloc08_phecode+(1|Phecode), family = 'binomial',data = Byphecode_agggregategene)
-summary(se_predictbycoloc_groupgene)$coefficient
+summary(se_predictbycoloc_groupgene)
 
 se_predictbyomim_groupgene=glmer(PHECODE_SE~omim_phecode+(1|Phecode), family = 'binomial', data = Byphecode_agggregategene )
-summary(se_predictbyomim_groupgene)$coefficient
+summary(se_predictbyomim_groupgene)
 
 
 ```
