@@ -30,9 +30,9 @@ Drug dataset:
 - se adr score
 - omim matched to phecode
 - coloc tissue and phenotype matched to phecode at pph4 >08
-- Tau and OE score 
+- Tau and OE score
 ``` {r, echo=F}
-dataset=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data/Dataset/drug_sider2_omim_tau_coloc.txt',data.table=F)
+dataset=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data/Dataset/drug_sider2_omim_tau_coloc_version2.txt',data.table=F)
 head(dataset)
 dataset$entrez_id=as.character(dataset$entrez_id)
 paste(length(unique(dataset$drugname)),'unique drugs,',length(unique(dataset$entrez_id)),'unique genes,',length(unique(dataset$PHECODE_SE)),'unique se,',length(unique(dataset$omim_phecode)),'unique omim phecode,',length(unique(dataset$coloc08_phecode)),'unique coloc2 phecode')
@@ -88,7 +88,7 @@ meanse=dataset %>% filter(!is.na(PHECODE_SE)) %>% group_by(drugname) %>% distinc
 plt2=ggplot(meanse, aes(x=se.no))+ geom_histogram(binwidth = 2, color="black", fill="light blue") +
   labs(x='Number of phecode se',y='Number of drugs', title='Number of phecode se per drug in dataset') +
   theme_classic()+
- geom_vline(aes(xintercept = mean(se.no)),col='red',size=1) + annotate("text",color='red', x = 26, y = 130, label = paste('mean number of', '\n', 'phecode se =', round(mean(meanse$se.no),2)))
+ geom_vline(aes(xintercept = mean(se.no)),col='red',size=1) + annotate("text",color='red', x = 30, y = 100, label = paste('mean number of', '\n', 'phecode se =', round(mean(meanse$se.no),2)))
 
 #mean tau
 meantau=dataset %>% group_by(drugname) %>% distinct(Tau) %>% summarise(mean_tau=mean(Tau, na.rm=T))
