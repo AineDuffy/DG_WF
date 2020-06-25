@@ -36,6 +36,7 @@ print(paste('There are ',length(unique(se$drugname)), 'unique drugs with PT se' 
 print(paste('There are ',length(unique(se$medra_se)), 'unique PT se' )) #There are  3209 unique PT se"
 ```
 #### Taking just preferred term 'PT' side effects
+Took se from medra and label so that could map all possible options to Phecodes later on. Deleted dupicates
 ```{r, echo=F}
 
 #996 drugs 
@@ -261,7 +262,7 @@ ggplot(adr_se_1, aes(x=se_adr,y=freq))+geom_point()+ geom_smooth() +labs(x='ADR 
 ```
 
 ### Match ICD to Phecodes and get ADR phecode score
-
+After filtering there are 126 phecodes which have mutliple ADR scores for different se that matched the phecode.
 ```{r, echo=F}
 
 #ICDCODES TO SAIGE
@@ -334,35 +335,5 @@ paste('Final datset is', nrow(finalse_df2), 'rows,', length(unique(finalse_df2$d
 #dif adr scores for same phecode - 126 dif phecodes. Take max?
  DUPS=finalse_df2 %>% group_by(drugname,PHECODE_SE) %>% 
   filter(n()>1)
-```
-
-##MATCH FINAL DATASET TO GENES, GET TAU, TPM, COLOC RESULTS
-### Match to entrez id  
-
-```{r, echo=F}
-
-drugbank=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/Target Drug-UniProt Links_ALL.csv',data.table=F, select=c(2,4))
-#drugs and uniprot id
-drugbank$Name=str_to_lower(drugbank$Name)
-colnames(drugbank)[1]='drugname'
-GeneDic <- fread("/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/GeneDictionary.txt", data.table = FALSE, select=c(2,19,26))
-drugbank$entrez_id=GeneDic$entrez_id[match(drugbank$`UniProt ID`, GeneDic$uniprot_ids)]
-drugbank$symbol=GeneDic$symbol[match(drugbank$`UniProt ID`, GeneDic$uniprot_ids)]
-drugbank1=drugbank[!is.na(drugbank$entrez_id),]
-
-
-finalse_df_gene=inner_join(drugbank[-2],finalse_df, by='drugname') #file -412794 rows
-finalse_df_gene=finalse_df_gene[!is.na(finalse_df_gene$entrez_id),]
-# #589 drugs #673 phecodes #658 genes
-
-print(paste('There are',length(unique(finalse_df_gene$drugname)), 'unique drugs'))
-print(paste('There are',length(unique(finalse_df_gene$entrez_id)), 'unique genes'))
-print(paste('There are',length(unique(finalse_df_gene$PHECODE_SE)), 'unique phecodes and out of these', length(unique(finalse_df_gene$PHECODE_SE[!is.na(finalse_df_gene$se_adr)])), 'has an adr score'))
-
-druggenes=finalse_df_gene %>% select(drugname, entrez_id) %>% group_by(drugname) %>% distinct()%>% tally() %>% arrange(desc(n))
-
-ggplot(druggenes, aes(x=n))+ geom_histogram(binwidth =2, color="black",fill="light blue") +
-  labs(x='Number of genes per drug',y='Number of drugs', title='Number of genes per drug') +
-  theme_classic()
 ```
 
