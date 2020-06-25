@@ -27,10 +27,11 @@ library(scales)
 ``` {r, echo=F}
 se=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/meddra_adverse_effects.tsv.gz',data.table=F)
 colnames(se)=c('stich1','stich2','umls_onlabel','drugname','se','medra_concepttype','umls_medra','medra_se')
-head(se)
+
 print(paste('There are ',length(unique(se$drugname)), 'unique drugs with se' )) #
 print(paste('There are ',length(unique(se$medra_se)), 'unique se' ))
 se=se[which(se$medra_concepttype=='PT'),]
+se=se %>% group_by(drugname)%>% mutate(se_no = row_number())
 print(paste('There are ',length(unique(se$drugname)), 'unique drugs with PT se' ))
 print(paste('There are ',length(unique(se$medra_se)), 'unique PT se' )) #There are  3209 unique PT se"
 ```
@@ -40,13 +41,16 @@ print(paste('There are ',length(unique(se$medra_se)), 'unique PT se' )) #There a
 #996 drugs 
 #4492 UNIQUE SE. #3209 PT
 
-se_table_a=se[c(4,7,8)][!duplicated(se[c(4,7,8)]),] #103156
+se_table_a=se[c(4,7,8,9)][!duplicated(se[c(4,7,8)]),] #103156
+se_table_a$se_no=gsub('$',':medra',se_table_a$se_no)
 colnames(se_table_a)[c(2,3)]=c('umls','se')
-se_table_b=se[c(4,3,5)][!duplicated(se[c(4,3,5)]),] #99423
+se_table_b=se[c(4,3,5,9)][!duplicated(se[c(4,3,5)]),] #99423
+se_table_b$se_no=gsub('$',':label',se_table_b$se_no)
+
 colnames(se_table_b)[c(2,3)]=c('umls','se')
 se_table_1=rbind(se_table_a,se_table_b)
 se_table_1$se=str_to_lower(se_table_1$se)
-se_table_1=se_table_1[!duplicated(se_table_1),]#147217
+se_table_1=se_table_1[!duplicated(se_table_1[c(1,2,3)]),]#147217
 dim(se_table_1)
 
 se_tab_1=as.data.frame(se_table_1 %>% select(drugname, se) %>%
@@ -132,7 +136,7 @@ paste(length(unique(matchse_mi_1$drugname)), 'drugs atleast one exact cui match 
 #matches removed
 remove.matchse_mi_1=drugs_se_main_1[which(drugs_se_main_1$cui_mi!=drugs_se_main_1$umls|is.na(drugs_se_main_1$mi)),]
 
-se_table_matchmiremoved_1=remove.matchse_mi_1[c(1:3)][!duplicated(remove.matchse_mi_1[c(1:3)]),]
+se_table_matchmiremoved_1=remove.matchse_mi_1[c(1:4)][!duplicated(remove.matchse_mi_1[c(1:4)]),]
 setab_1=as.data.frame(se_table_matchmiremoved_1 %>% select(drugname, se) %>% distinct() %>%
  group_by(se) %>% tally() %>%
   arrange(desc(n)))
@@ -168,8 +172,9 @@ icd_cui=icd_cui %>% filter(V12=='ICD10CM',V2=='ENG' ) %>% distinct(V1,V11) %>% r
 
 se_icd_all_1=merge(filterdrugs_se_1, icd_cui, by='umls')
 colnames(se_icd_all_1)=gsub('ICD10','ICD10_SE', colnames(se_icd_all_1))
-se_icd_all_1=se_icd_all_1[!duplicated(se_icd_all_1),]
-
+dim(se_icd_all_1)
+se_icd_all_1=se_icd_all_1[!duplicated(se_icd_all_1[-4]),]
+dim(se_icd_all_1)
 print(paste('There are',length(unique(se_icd_all_1$drugname)), 'unique drugs with se that match to ICD10' )) #872 unique drugs
 print(paste('There are',length(unique(se_icd_all_1$se)), 'unique se' ))
 print(paste('There are',length(unique(se_icd_all_1$ICD10_SE)), 'unique ICD codes' ))
@@ -225,7 +230,7 @@ adr=read.xlsx('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/ADR_r
 adr$Name=str_to_lower(adr$Name)
 
 se_icd_all_1$se_adr=adr$Rank.score[match(se_icd_all_1$se, adr$Name)]
-
+dim(se_icd_all_1)
 #868 drugs which have se- icd code
 paste(length(unique(se_icd_all_1$se[!is.na(se_icd_all_1$se_adr)])), 'out of', length(unique(se_icd_all_1$se)), 'unique se have a adr score')
 "1053 out of 1830 unique se have a adr score"
@@ -271,9 +276,12 @@ ICD$ADR=icd_adr$se_adr[match(ICD$ICD10CM, icd_adr$ICD10_SE)]
 ##each icd maps to only one phecode but multipe icds map to same 
 
 se_icd_all_1$PHECODE_SE=ICD$PHECODE[match(se_icd_all_1$ICD10_SE,ICD$ICD10CM)]
+dim(se_icd_all_1)
 se_icd_all_1$PHECODE_DESC_SE=ICD$PHECODE_DESC[match(se_icd_all_1$ICD10_SE,ICD$ICD10CM)]
-se_icd_all_1=se_icd_all_1[!duplicated(se_icd_all_1),]
- 
+dim(se_icd_all_1)
+se_icd_all_1=se_icd_all_1[!duplicated(se_icd_all_1[-4]),]
+dim(se_icd_all_1)
+se_icd_all_1=se_icd_all_1[!is.na(se_icd_all_1$PHECODE_SE),] 
 Phenotype_cateogory=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/phecode_definitions1.2.csv',data.table=F)
 se_icd_all_1$phecode_category=Phenotype_cateogory$category[match(se_icd_all_1$PHECODE_SE, Phenotype_cateogory$phecode)]
 #Map number of distinct se + their phecodes to the phecode cateogory
@@ -302,15 +310,30 @@ se_icd_all_1$PHECODE_MI=mi_label1$PHECODE_MI[match(se_icd_all_1$cui_mi,mi_label1
 
 
 #MI AND SE which match on phecode 
-matchingphecode_mi_se= se_icd_all_1 %>% select(se,ICD10_SE, PHECODE_SE, mi, ICD10_MI, PHECODE_MI) %>% filter(PHECODE_SE==PHECODE_MI) %>% distinct()
+matchingphecode_mi_se= se_icd_all_1 %>% select(se,se_no,ICD10_SE, PHECODE_SE, mi, ICD10_MI, PHECODE_MI) %>% filter(PHECODE_SE==PHECODE_MI) %>% distinct()
 
 DT::datatable(matchingphecode_mi_se)
 
 remove.matchse_miphecode=se_icd_all_1[which(se_icd_all_1$PHECODE_SE!=se_icd_all_1$PHECODE_MI|is.na(se_icd_all_1$PHECODE_MI)),]
 
 #ADR SCORE THAT WAS MAPPED TO THE INITIAL SE. 
-finalse_df= se_icd_all_1 %>% select(drugname,PHECODE_SE, se_adr) %>% distinct()
+finalse_df= se_icd_all_1 %>% select(drugname,PHECODE_SE, se_adr,se_no) %>% distinct()
 paste('Final datset is', nrow(finalse_df), 'rows,', length(unique(finalse_df$drugname)), 'drugs and', length(unique(finalse_df$PHECODE_SE)),'phecode se where',length(unique(finalse_df$PHECODE_SE[!is.na(finalse_df$se_adr)])),'phecodes have a matching se adr score')
+library(tidyr)
+
+finalse_df1=finalse_df[order(finalse_df$drugname,finalse_df$PHECODE_SE,finalse_df$se_adr),]
+dim(finalse_df1)
+finalse_df1=finalse_df1[!duplicated(finalse_df1[c(1:3)]),]
+dim(finalse_df1)
+finalse_df1=separate(finalse_df1,col=se_no, into=c('no','source'), sep=':',remove=F)
+dim(finalse_df1)
+finalse_df1=finalse_df1[!duplicated(finalse_df1[c(1,2,5)]),]
+dim(finalse_df1)
+finalse_df2<-finalse_df1[!(duplicated(finalse_df1[c(1,2)]) & is.na(finalse_df1$se_adr)),]
+paste('Final datset is', nrow(finalse_df2), 'rows,', length(unique(finalse_df2$drugname)), 'drugs and', length(unique(finalse_df2$PHECODE_SE)),'phecode se where',length(unique(finalse_df2$PHECODE_SE[!is.na(finalse_df2$se_adr)])),'phecodes have a matching se adr score')
+#dif adr scores for same phecode - 126 dif phecodes. Take max?
+ DUPS=finalse_df2 %>% group_by(drugname,PHECODE_SE) %>% 
+  filter(n()>1)
 ```
 
 ##MATCH FINAL DATASET TO GENES, GET TAU, TPM, COLOC RESULTS
