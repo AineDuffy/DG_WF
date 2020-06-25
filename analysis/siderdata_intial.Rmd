@@ -323,13 +323,13 @@ paste('Final datset is', nrow(finalse_df), 'rows,', length(unique(finalse_df$dru
 library(tidyr)
 
 finalse_df1=finalse_df[order(finalse_df$drugname,finalse_df$PHECODE_SE,finalse_df$se_adr),]
-dim(finalse_df1)
+#dim(finalse_df1)
 finalse_df1=finalse_df1[!duplicated(finalse_df1[c(1:3)]),]
-dim(finalse_df1)
+#dim(finalse_df1)
 finalse_df1=separate(finalse_df1,col=se_no, into=c('no','source'), sep=':',remove=F)
-dim(finalse_df1)
+#dim(finalse_df1)
 finalse_df1=finalse_df1[!duplicated(finalse_df1[c(1,2,5)]),]
-dim(finalse_df1)
+#dim(finalse_df1)
 finalse_df2<-finalse_df1[!(duplicated(finalse_df1[c(1,2)]) & is.na(finalse_df1$se_adr)),]
 paste('Final datset is', nrow(finalse_df2), 'rows,', length(unique(finalse_df2$drugname)), 'drugs and', length(unique(finalse_df2$PHECODE_SE)),'phecode se where',length(unique(finalse_df2$PHECODE_SE[!is.na(finalse_df2$se_adr)])),'phecodes have a matching se adr score')
 #dif adr scores for same phecode - 126 dif phecodes. Take max?
