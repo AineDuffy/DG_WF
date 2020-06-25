@@ -413,7 +413,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-06-24
+<strong>Last updated:</strong> 2020-06-25
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -504,16 +504,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtreeeabc3a86f9ca139831acae26e75c3367829d4b02targetblankeabc3a8a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/eabc3a86f9ca139831acae26e75c3367829d4b02" target="_blank">eabc3a8</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtreeb509e754d6d5f6419e964605465eee77f79eabbdtargetblankb509e75a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/b509e754d6d5f6419e964605465eee77f79eabbd" target="_blank">b509e75</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtreeeabc3a86f9ca139831acae26e75c3367829d4b02targetblankeabc3a8a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtreeb509e754d6d5f6419e964605465eee77f79eabbdtargetblankb509e75a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/eabc3a86f9ca139831acae26e75c3367829d4b02" target="_blank">eabc3a8</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/b509e754d6d5f6419e964605465eee77f79eabbd" target="_blank">b509e75</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -564,6 +564,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/b509e754d6d5f6419e964605465eee77f79eabbd/analysis/Drug_dataset_SIDER2.Rmd" target="_blank">b509e75</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-25
+</td>
+<td>
+Re ran and included SE label and SE medra and source
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AineDuffy/DG_WF/1df05dc962872b7b2f4509b450a87f38a37b1082/docs/Drug_dataset_SIDER2.html" target="_blank">1df05dc</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -727,20 +761,27 @@ Running first basic model
 <div id="overview-of-dataset" class="section level3">
 <h3>Overview of dataset</h3>
 <p>Drug dataset: - target genes - sider V2 se matched to phecode - se adr score - omim matched to phecode - coloc tissue and phenotype matched to phecode at pph4 &gt;08 - Tau and OE score</p>
-<pre><code>   drugname entrez_id symbol PHECODE_SE se_adr withdrawn       Tau omim_phecode
-1 lepirudin      2147     F2      411.2     NA      &lt;NA&gt; 0.9735913        627.4
-2 lepirudin      2147     F2      411.2     NA      &lt;NA&gt; 0.9735913        627.4
-3 lepirudin      2147     F2      411.2     NA      &lt;NA&gt; 0.9735913        627.4
-4 lepirudin      2147     F2      411.2     NA      &lt;NA&gt; 0.9735913        627.4
-5 lepirudin      2147     F2      411.2     NA      &lt;NA&gt; 0.9735913        627.4
-6 lepirudin      2147     F2      411.2     NA      &lt;NA&gt; 0.9735913        627.4
-            Tissue coloc08_phecode     Source oe_lof_upper
-1    Artery_Tibial           365.0 UKBB&amp;Saige        0.536
-2    Artery_Tibial           401.1 UKBB&amp;Saige        0.536
-3    Artery_Tibial           451.0 UKBB&amp;Saige        0.536
-4 Brain_Cerebellum           401.1 UKBB&amp;Saige        0.536
-5 Brain_Cerebellum           451.0 UKBB&amp;Saige        0.536
-6  Artery_Coronary           429.3       ukbb        0.536</code></pre>
+<pre><code>   drugname entrez_id symbol PHECODE_SE    se_adr    se_no no source withdrawn
+1 lepirudin      2147     F2      276.5 0.6788094 46:medra 46  medra      &lt;NA&gt;
+2 lepirudin      2147     F2      276.5 0.6788094 46:medra 46  medra      &lt;NA&gt;
+3 lepirudin      2147     F2      276.5 0.6788094 46:medra 46  medra      &lt;NA&gt;
+4 lepirudin      2147     F2      276.5 0.6788094 46:medra 46  medra      &lt;NA&gt;
+5 lepirudin      2147     F2      276.5 0.6788094 46:medra 46  medra      &lt;NA&gt;
+6 lepirudin      2147     F2      276.5 0.6788094 46:medra 46  medra      &lt;NA&gt;
+        Tau omim_phecode           Tissue coloc08_phecode     Source
+1 0.9735913        627.4    Artery_Tibial           365.0 UKBB&amp;Saige
+2 0.9735913        627.4    Artery_Tibial           401.1 UKBB&amp;Saige
+3 0.9735913        627.4    Artery_Tibial           451.0 UKBB&amp;Saige
+4 0.9735913        627.4 Brain_Cerebellum           401.1 UKBB&amp;Saige
+5 0.9735913        627.4 Brain_Cerebellum           451.0 UKBB&amp;Saige
+6 0.9735913        627.4  Artery_Coronary           429.3       ukbb
+  oe_lof_upper
+1        0.536
+2        0.536
+3        0.536
+4        0.536
+5        0.536
+6        0.536</code></pre>
 <pre><code>[1] &quot;623 unique drugs, 677 unique genes, 783 unique se, 97 unique omim phecode, 770 unique coloc2 phecode&quot;</code></pre>
 <pre><code>
      saige       ukbb UKBB&amp;Saige 
@@ -774,6 +815,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/1df05dc962872b7b2f4509b450a87f38a37b1082/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-3-1.png" target="_blank">1df05dc</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AineDuffy/DG_WF/blob/2838c7e29749ad0dfbc56a8908ca1b485a1c75d3/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-3-1.png" target="_blank">2838c7e</a>
@@ -818,6 +870,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/1df05dc962872b7b2f4509b450a87f38a37b1082/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-4-1.png" target="_blank">1df05dc</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AineDuffy/DG_WF/blob/b7c20b1c8e1c5e6ba54adc39b8957a3ef060d4ca/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-4-1.png" target="_blank">b7c20b1</a>
@@ -869,6 +932,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/1df05dc962872b7b2f4509b450a87f38a37b1082/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-4-2.png" target="_blank">1df05dc</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AineDuffy/DG_WF/blob/2838c7e29749ad0dfbc56a8908ca1b485a1c75d3/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-4-2.png" target="_blank">2838c7e</a>
 </td>
 <td>
@@ -907,6 +981,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/1df05dc962872b7b2f4509b450a87f38a37b1082/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-4-3.png" target="_blank">1df05dc</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AineDuffy/DG_WF/blob/2838c7e29749ad0dfbc56a8908ca1b485a1c75d3/docs/figure/Drug_dataset_SIDER2.Rmd/unnamed-chunk-4-3.png" target="_blank">2838c7e</a>
 </td>
 <td>
@@ -933,20 +1018,20 @@ Coloc Phenotype             770 81.5166667 66.8504902</code></pre>
 <ol style="list-style-type: decimal">
 <li>Dataset - 589 unique drugs. 2933 unique drug-gene pairs X 672 unique SE = 1,970,976 lines</li>
 </ol>
-<pre><code>                  drugname entrez_id symbol PheCode PHECODE_SE omim_phecode
-4279  conjugated estrogens      2099   ESR1   411.2          1            0
-7727             estradiol      2099   ESR1   411.2          1            0
-15743            tirofiban      3690  ITGB3   411.2          1            0
-82             almotriptan      3351  HTR1B   411.2          1           NA
-2201            carvedilol       152 ADRA2C   411.2          1           NA
-2607            carvedilol       153  ADRB1   411.2          1           NA
-      coloc08_phecode
-4279                1
-7727                1
-15743               1
-82                  1
-2201                1
-2607                1</code></pre>
+<pre><code>                drugname entrez_id  symbol PheCode PHECODE_SE omim_phecode
+2799          carvedilol      2697    GJA1   276.5          1            0
+5790          furosemide      6557 SLC12A1   276.5          1            0
+5894          furosemide       760     CA2   276.5          1            0
+6079 hydrochlorothiazide      3778  KCNMA1   276.5          1            0
+6489 hydrochlorothiazide       760     CA2   276.5          1            0
+6976           lepirudin      2147      F2   276.5          1            0
+     coloc08_phecode
+2799               0
+5790               0
+5894               0
+6079               0
+6489               0
+6976               0</code></pre>
 <pre><code>[1] &quot;0 if gene doesnt match phecode se. NA if omim or coloc never reported gene&quot;</code></pre>
 <pre><code>$PHECODE_SE
       0       1 
@@ -1039,8 +1124,14 @@ AIC: 598720
 Number of Fisher Scoring iterations: 9</code></pre>
 <pre class="r"><code>se_predictbycoloc=glmer(PHECODE_SE~coloc08_phecode+(1|PheCode), data = Byphecode3, family = &#39;binomial&#39;)</code></pre>
 <pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
-Model failed to converge with max|grad| = 0.00427043 (tol = 0.002, component 1)</code></pre>
+unable to evaluate scaled gradient</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Model failed to converge: degenerate Hessian with 2 negative eigenvalues</code></pre>
 <pre class="r"><code>summary(se_predictbycoloc)</code></pre>
+<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
 <pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
   Approximation) [glmerMod]
  Family: binomial  ( logit )
@@ -1052,35 +1143,28 @@ Formula: PHECODE_SE ~ coloc08_phecode + (1 | PheCode)
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.608 -0.176 -0.092 -0.042 41.054 
+-0.608 -0.176 -0.092 -0.042 41.051 
 
 Random effects:
  Groups  Name        Variance Std.Dev.
- PheCode (Intercept) 3.002    1.733   
+ PheCode (Intercept) 3.001    1.732   
 Number of obs: 2493072, groups:  PheCode, 783
 
 Fixed effects:
                   Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept)       -4.76416    0.02793  -170.6   &lt;2e-16 ***
-coloc08_phecode 3816.23215    0.44986  8483.1   &lt;2e-16 ***
+(Intercept)     -4.764e+00  6.297e-02 -75.657   &lt;2e-16 ***
+coloc08_phecode  3.817e+03  1.954e+06   0.002    0.998    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Correlation of Fixed Effects:
             (Intr)
-colc08_phcd 0.001 
+colc08_phcd 0.000 
 convergence code: 0
-Model failed to converge with max|grad| = 0.00427043 (tol = 0.002, component 1)</code></pre>
-<pre class="r"><code>se_predictbyomim=glmer(PHECODE_SE~omim_phecode+(1|PheCode), data = Byphecode3, family = &#39;binomial&#39;)</code></pre>
-<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
-unable to evaluate scaled gradient</code></pre>
-<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
-Model failed to converge: degenerate Hessian with 1 negative eigenvalues</code></pre>
-<pre class="r"><code>summary(se_predictbyomim)</code></pre>
-<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
-not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
-<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
-not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+unable to evaluate scaled gradient
+Model failed to converge: degenerate  Hessian with 2 negative eigenvalues</code></pre>
+<pre class="r"><code>se_predictbyomim=glmer(PHECODE_SE~omim_phecode+(1|PheCode), data = Byphecode3, family = &#39;binomial&#39;)
+summary(se_predictbyomim)</code></pre>
 <pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
   Approximation) [glmerMod]
  Family: binomial  ( logit )
@@ -1100,18 +1184,15 @@ Random effects:
 Number of obs: 2493072, groups:  PheCode, 783
 
 Fixed effects:
-               Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept)    -4.74280    0.06285 -75.460   &lt;2e-16 ***
-omim_phecode   20.40123 1589.37398   0.013     0.99    
+             Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)  -4.74273    0.03564 -133.075   &lt;2e-16 ***
+omim_phecode 20.23399    2.43998    8.293   &lt;2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Correlation of Fixed Effects:
             (Intr)
-omim_phecod 0.000 
-convergence code: 0
-unable to evaluate scaled gradient
-Model failed to converge: degenerate  Hessian with 1 negative eigenvalues</code></pre>
+omim_phecod 0.000 </code></pre>
 <pre class="r"><code>multi=glm(PHECODE_SE~coloc08_phecode+omim_phecode, data = Byphecode3, family = &#39;binomial&#39;)
 summary(multi)</code></pre>
 <pre><code>
@@ -1127,7 +1208,7 @@ Coefficients:
                  Estimate Std. Error  z value Pr(&gt;|z|)    
 (Intercept)     -3.646942   0.004026 -905.920   &lt;2e-16 ***
 coloc08_phecode 17.213008  15.586422    1.104    0.269    
-omim_phecode    17.213008  94.648217    0.182    0.856    
+omim_phecode    17.213008  94.648220    0.182    0.856    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
@@ -1142,12 +1223,12 @@ Number of Fisher Scoring iterations: 12</code></pre>
 <li>Dataset - 589 unique drugs X 672 unique SE = 395,808 lines All genes aggregated per drug</li>
 </ol>
 <pre><code>       drugname PHECODE_SE omim_phecode coloc08_phecode Phecode
-1   acamprosate          0            0               0   411.2
-2      acarbose          0            0               0   411.2
-3    acebutolol          0            0               0   411.2
-4   aceclofenac          0            0               0   411.2
-5 acetaminophen          0            0               0   411.2
-6 acetazolamide          0            0               0   411.2</code></pre>
+1   acamprosate          0            0               0   276.5
+2      acarbose          0            0               0   276.5
+3    acebutolol          0            0               0   276.5
+4   aceclofenac          0            0               0   276.5
+5 acetaminophen          0            0               0   276.5
+6 acetazolamide          0            0               0   276.5</code></pre>
 <pre><code>$PHECODE_SE
      0      1 
 476743  11066 
@@ -1246,7 +1327,7 @@ Formula: PHECODE_SE ~ coloc08_phecode + (1 | Phecode)
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--0.4146 -0.1646 -0.0911 -0.0530 18.8775 
+-0.4146 -0.1646 -0.0911 -0.0530 18.8776 
 
 Random effects:
  Groups  Name        Variance Std.Dev.
@@ -1256,7 +1337,7 @@ Number of obs: 487809, groups:  Phecode, 783
 Fixed effects:
                   Estimate Std. Error z value Pr(&gt;|z|)    
 (Intercept)     -4.586e+00  5.014e-02  -91.45   &lt;2e-16 ***
-coloc08_phecode  3.335e+01  8.030e+04    0.00        1    
+coloc08_phecode  3.328e+01  7.753e+04    0.00        1    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
@@ -1266,8 +1347,16 @@ colc08_phcd 0.000
 convergence code: 0
 unable to evaluate scaled gradient
 Model failed to converge: degenerate  Hessian with 1 negative eigenvalues</code></pre>
-<pre class="r"><code>se_predictbyomim_groupgene=glmer(PHECODE_SE~omim_phecode+(1|Phecode), family = &#39;binomial&#39;, data = Byphecode_agggregategene )
-summary(se_predictbyomim_groupgene)</code></pre>
+<pre class="r"><code>se_predictbyomim_groupgene=glmer(PHECODE_SE~omim_phecode+(1|Phecode), family = &#39;binomial&#39;, data = Byphecode_agggregategene )</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+unable to evaluate scaled gradient</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Hessian is numerically singular: parameters are not uniquely determined</code></pre>
+<pre class="r"><code>summary(se_predictbyomim_groupgene)</code></pre>
+<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
 <pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
   Approximation) [glmerMod]
  Family: binomial  ( logit )
@@ -1283,19 +1372,22 @@ Scaled residuals:
 
 Random effects:
  Groups  Name        Variance Std.Dev.
- Phecode (Intercept) 1.731    1.315   
+ Phecode (Intercept) 1.73     1.315   
 Number of obs: 487809, groups:  Phecode, 783
 
 Fixed effects:
-             Estimate Std. Error  z value Pr(&gt;|z|)    
-(Intercept)  -4.51027    0.04368 -103.264   &lt;2e-16 ***
-omim_phecode 27.42830   32.00000    0.857    0.391    
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)     -4.5103     0.0499 -90.394   &lt;2e-16 ***
+omim_phecode    27.3768 40780.6246   0.001    0.999    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Correlation of Fixed Effects:
             (Intr)
-omim_phecod 0.000 </code></pre>
+omim_phecod 0.000 
+convergence code: 0
+unable to evaluate scaled gradient
+ Hessian is numerically singular: parameters are not uniquely determined</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
