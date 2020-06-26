@@ -14,3 +14,8 @@ Click on this [link](https://aineduffy.github.io/DG_WF/siderdata_intial.html) to
 
 Click on this [link](https://aineduffy.github.io/DG_WF/Drug_dataset_SIDER2.html) to see data descriptives and first pass at model.
 
+Previous version of files and models ran
+
+Click on this [link](https://aineduffy.github.io/DG_WF/Drug_dataset_V1.html) to see data descriptives and first pass at model.
+
+Click on this [link](https://aineduffy.github.io/DG_WF/Drug_dataset_V2.html) to see data descriptives and first pass at model.
