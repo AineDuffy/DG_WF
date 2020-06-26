@@ -209,7 +209,13 @@ lapply(Byphecode2[c(5:7)], function(x) summary(as.factor(x)))
 Byphecode3=Byphecode2
 Byphecode3[is.na(Byphecode3)]<-0
 
-lapply(Byphecode3[c(5:7)], function(x) summary(as.factor(x)))
+df=lapply(Byphecode3[c(5:7)], function(x) summary(as.factor(x)))
+df=do.call('rbind',df)
+df
+chisq_se.coloc=chisq.test(df[-2,],correct = FALSE)
+chisq_se.coloc
+chisq_se.omim=chisq.test(df[-3,],correct = FALSE)
+chisq_se.omim
 
 print('Number of phecode se, coloc and omim matches per drug-gene pair')
  descriptivetable2druggene=Byphecode3%>% group_by(drugname,entrez_id) %>% summarise(total_se=sum(PHECODE_SE), total_coloc=sum(coloc08_phecode), total_omim=sum(omim_phecode))
@@ -270,7 +276,13 @@ Byphecode_agggregategene<-lapply(c(se_phecodes), function(se){
 })
 Byphecode_agggregategene<-do.call('rbind',Byphecode_agggregategene)  
 head(Byphecode_agggregategene)
-lapply(Byphecode_agggregategene[c(2:4)], function(x) summary(as.factor(x)))
+df_1=lapply(Byphecode_agggregategene[c(2:4)], function(x) summary(as.factor(x)))
+df_1=do.call('rbind',df_1)
+
+chisq_se.coloc1=chisq.test(df_1[-2,],correct = FALSE)
+chisq_se.coloc1
+chisq_se.omim1=chisq.test(df_1[-3,],correct = FALSE)
+chisq_se.omim1
 
 print('Number of unique phecode se, coloc and omim matches per drug')
 
