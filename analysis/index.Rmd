@@ -16,6 +16,6 @@ Click on this [link](https://aineduffy.github.io/DG_WF/Drug_dataset_SIDER2.html)
 
 ### Previous version of files and models
 
-Click on this [link](https://aineduffy.github.io/DG_WF/Drug_Dataset_V1.html) to see data descriptives and first pass at model.
+Click on this [link](https://aineduffy.github.io/DG_WF/Drug_Dataset_V1.html) to see data descriptives and first pass at model V1. Just medra se
 
 Click on this [link](https://aineduffy.github.io/DG_WF/Drug_Dataset_V2.html) to see data descriptives and first pass at model.
