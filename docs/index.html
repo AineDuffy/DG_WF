@@ -333,7 +333,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-06-26
+<strong>Last updated:</strong> 2020-07-02
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -364,16 +364,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree396447b5725781ecacbfed310a75c5e1f8ad862dtargetblank396447ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/396447b5725781ecacbfed310a75c5e1f8ad862d" target="_blank">396447b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree41e89dd4d6debb0282b8c73d1a0506f4540040d8targetblank41e89dda"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/41e89dd4d6debb0282b8c73d1a0506f4540040d8" target="_blank">41e89dd</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree396447b5725781ecacbfed310a75c5e1f8ad862dtargetblank396447ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree41e89dd4d6debb0282b8c73d1a0506f4540040d8targetblank41e89dda" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/396447b5725781ecacbfed310a75c5e1f8ad862d" target="_blank">396447b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/41e89dd4d6debb0282b8c73d1a0506f4540040d8" target="_blank">41e89dd</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -382,10 +382,17 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .DS_Store
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/Maketable_sider2_updated.r
+    Untracked:  analysis/missingse_noicd.xlsx
     Untracked:  analysis/siderdata_v4.Rmd
+
+Unstaged changes:
+    Modified:   analysis/Drug_Dataset_V1.Rmd
+    Modified:   analysis/Drug_dataset_SIDER2.Rmd
+    Modified:   analysis/siderdata_intial.Rmd
 
 </code></pre>
 <p>
@@ -424,6 +431,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/41e89dd4d6debb0282b8c73d1a0506f4540040d8/analysis/index.Rmd" target="_blank">41e89dd</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-07-02
+</td>
+<td>
+Using medra PT SE unless no icd code and then takes LT label SE
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AineDuffy/DG_WF/aa109ebbeb17de543477e0c8d99d0c66039bcae3/docs/index.html" target="_blank">aa109eb</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-06-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1010,10 +1051,12 @@ Start workflowr project.
 </div>
 </div>
 <p>Welcome to my research website.</p>
-<p>Click on this <a href="https://aineduffy.github.io/DG_WF/siderdata_intial.html">link</a> to see side effect results.</p>
-<p>Click on this <a href="https://aineduffy.github.io/DG_WF/Drug_dataset_SIDER2.html">link</a> to see data descriptives and first pass at model.</p>
+<p>Click on this <a href="https://aineduffy.github.io/DG_WF/Filtering_sider2_dataset.html">link</a> to see side effect results. –Using medra PT (preferred term) SE unless no icd code and then takes LT (lowest term) label SE</p>
+<p>Click on this <a href="https://aineduffy.github.io/DG_WF/Drug_dataset_v4.html">link</a> to see data descriptives and first pass at model.</p>
 <div id="previous-version-of-files-and-models" class="section level3">
 <h3>Previous version of files and models</h3>
+<p>Click on this <a href="https://aineduffy.github.io/DG_WF/siderdata_intial.html">link</a> to see side effect results.</p>
+<p>Click on this <a href="https://aineduffy.github.io/DG_WF/Drug_dataset_SIDER2.html">link</a> to see data descriptives and first pass at model.</p>
 <p>Click on this <a href="https://aineduffy.github.io/DG_WF/Drug_Dataset_V1.html">link</a> to see data descriptives and first pass at model V1. Just medra se</p>
 <p>Click on this <a href="https://aineduffy.github.io/DG_WF/Drug_Dataset_V2.html">link</a> to see data descriptives and first pass at model.</p>
 </div>
