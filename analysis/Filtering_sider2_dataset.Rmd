@@ -1,0 +1,414 @@
+---
+title: "Filtering SIDER2 dataset"
+author: "AineDuffy"
+date: "2020-04-14"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+####Looking at the frequency of side effects and drugs in SIDER V2 (2012-10-17). Data sourced from FTP link from [Here](http://sideeffects.embl.de) 
+
+```{r, include=F}
+
+library(data.table)
+library(stringr)
+library(xlsx)
+library(ggplot2) 
+library(dplyr)
+library(kableExtra)
+library(DT)
+library(scales)
+```
+
+### Overview of dataset 
+``` {r, echo=F}
+se=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/meddra_adverse_effects.tsv.gz',data.table=F)
+colnames(se)=c('stich1','stich2','umls_onlabel','drugname','se','medra_concepttype','umls_medra','medra_se')
+head(se)
+print(paste('There are ',length(unique(se$drugname)), 'unique drugs with', length(unique(se$medra_se)), 'unique se'))
+se=se[which(se$medra_concepttype=='PT'),]
+print(paste('There are ',length(unique(se$drugname)), 'unique drugs with',length(unique(se$medra_se)), 'unique PT se' ))
+se$se=str_to_lower(se$se)
+se$medra_se=str_to_lower(se$medra_se)
+```
+#### Taking just preferred term 'PT' side effects
+```{r, echo=F}
+
+#996 drugs 
+#4492 UNIQUE SE. #3209 PT
+se_table=se[c(4,7,8)][!duplicated(se[c(4,7,8)]),]
+setab=as.data.frame(se_table %>% select(drugname, medra_se) %>%
+ group_by(medra_se) %>% tally() %>%
+  arrange(desc(n)))
+
+###Side effect frequency
+DT::datatable(setab,caption = 'Table 1: Side effect frequency in Sider', filter='top',colnames=c('Side effects','Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy','csvHtml15','excel'))
+
+####Side effect frequency summary
+summary(setab$n)
+
+ggplot(setab, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Side effect frequency',y='Number of drugs', title='Side effect frequency across SIDER2') +
+  theme_classic()
+
+```
+
+### Main Indications
+
+```{r, echo =F}
+mi=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/indications_raw.tsv.gz', data.table=F, header=F)
+colnames(mi)=c('label_identifier','cui','mi')
+
+label=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/SIDER 2/label_mapping.tsv', data.table=F)
+colnames(label)=c('drugname','brandrugname','markermapped','stich_id','stich_id1','url','label_identifier')
+
+label1=as.data.frame(do.call(rbind, apply(label[c(2,7)],1,function(X){
+	do.call(expand.grid, strsplit(X, ';',useBytes = TRUE))
+}
+	)))
+
+label2=merge(label1,label[c(1,7)], by='label_identifier',all=T)
+label3=label2[!duplicated(label2),]
+label3$brandrugname=str_to_lower(label3$brandrugname)
+label3$drugname=str_to_lower(label3$drugname)
+colnames(label3)=c('label_identifier','drugname','drugname')
+label4=rbind(label3[c(1,2)], label3[c(1,3)])
+label4=label4[!duplicated(label4),] #72258 rows
+
+mi_label=inner_join(mi, label4, by='label_identifier')
+mi_label$mi=str_to_lower(mi_label$mi)
+mi_label1=mi_label[-1]
+mi_label1=mi_label1[!duplicated(mi_label1),]
+colnames(mi_label1)[1]='cui_mi'
+#65573 line
+paste(length(unique(mi_label1$drugname)),'unique drugs with', length(unique(mi_label1$cui)), 'unique main indications')
+
+#Drug frequency for main indications
+mitab=as.data.frame(mi_label1 %>% 
+ group_by(mi) %>% tally() %>%
+  arrange(desc(n)))
+DT::datatable(mitab,caption = 'Table 2: Main indication frequency in Sider', filter='top',colnames=c('Main indication','Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy','csvHtml15','excel'))
+
+summary(mitab$n)
+
+ggplot(mitab, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Main indication frequency',y='Number of drugs', title='Main indication frequency across SIDER2') +
+  theme_classic()
+
+
+
+
+```
+### Filter SE
+1. Remove se for drugs where se==mi. Used both umls label and medra se cui 
+2. How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+3. How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+```{r, echo=F}
+
+#1) Remove se for drugs ==mi. used both umls label and medra se
+drugs_se_main=left_join(se[c(-1,-2,-6)],mi_label1, by='drugname')
+#784 drugs which have mi and se
+paste(length(unique(drugs_se_main$drugname)), 'drugs have se and',length(unique(drugs_se_main$drugname[!is.na(drugs_se_main$mi)])),'of these have mi info as well.', length(unique(drugs_se_main$medra_se)), 'unique se and',length(unique(drugs_se_main$mi)), 'unique mi' )
+ "996 drugs have se and 784 of these have mi info as well. 3209 unique se and 2636 unique mi"
+#drugs_se_main=drugs_se_main[!duplicated(drugs_se_main),]
+matchse_mi1=drugs_se_main[which(drugs_se_main$cui_mi==drugs_se_main$umls_medra|drugs_se_main$cui_mi==drugs_se_main$umls_onlabel),]
+head(matchse_mi1)
+paste(length(unique(matchse_mi1$drugname)), 'drugs atleast one exact cui match for mi = se')
+"264 drugs atleast one exact cui match for mi = se"
+
+
+#matches removed
+remove.matchse_mi=drugs_se_main[which(drugs_se_main$cui_mi!=drugs_se_main$umls_medra&drugs_se_main$cui_mi!=drugs_se_main$umls_onlabel|is.na(drugs_se_main$mi)),]
+
+se_table_matchmiremoved=remove.matchse_mi[c(1:5)][!duplicated(remove.matchse_mi[c(1:5)]),]
+setab=as.data.frame(se_table_matchmiremoved %>% select(drugname, medra_se) %>% distinct() %>%
+ group_by(medra_se) %>% tally() %>%
+  arrange(desc(n)))
+
+# DT::datatable(setab,caption = 'Table 3: Side effect frequency in Sider for drugs with main indication info', filter='top',colnames=c('Side effects','Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy','csvHtml15','excel'))
+
+#1) How many side effects are there that are observed in >=10% of drugs? How many side effects in total?
+se.greater10=setab[setab$n>length(unique(se_table_matchmiremoved$drugname))/10,]
+print(paste(nrow(se.greater10),'out of',length(unique(se_table_matchmiremoved$medra_se)),'unique side effects observed in > 10% of',length(unique(se_table_matchmiremoved$drugname)),'drugs')) 
+"288 out of 3209 unique side effects observed in > 10% of 996 drugs"
+#2) How many drugs are there that are observed in >=10% of side effect? How many drugs in total?
+#drugs with more than >10% side effects?
+setabdrug=as.data.frame(se_table_matchmiremoved %>% distinct() %>%
+ group_by(drugname) %>% tally() %>%
+  arrange(desc(n)))
+
+drug.greater10=setabdrug[setabdrug$n>length(unique(se_table_matchmiremoved$medra_se))/10,]
+print(paste(nrow(drug.greater10),'out of',length(unique(se_table_matchmiremoved$drugname)), 'drugs observed with > 10% of',length(unique(se_table_matchmiremoved$medra_se)),'unique se'))
+# "56 out of 996 drugs observed with > 10% of 3209 unique se"
+filterdrugs_se=subset(remove.matchse_mi, !(drugname %in% drug.greater10$drugname))
+paste(length(unique(filterdrugs_se$drugname)),'unique drugs and', length(unique(filterdrugs_se$medra_se)),'unique se once removed >10% se and drugs')
+#"940 unique drugs and 2889 unique se once removed >10% se and drugs"
+
+filterdrugs_se=subset(filterdrugs_se, !(medra_se %in% se.greater10$medra_se))
+paste(length(unique(filterdrugs_se$drugname)),'unique drugs and', length(unique(filterdrugs_se$medra_se)),'unique se once removed >10% se and drugs')
+# "909 unique drugs and 2601 unique se once removed >10% se and drugs"
+
+#frequency of se once removed common
+setab_filtered=as.data.frame(filterdrugs_se %>% select(drugname, medra_se) %>% distinct() %>%
+ group_by(medra_se) %>% tally() %>%
+  arrange(desc(n)))
+
+
+```
+
+### Match side effects to ICD10 codes 
+```{r, echo=F}
+###Side effects matched to ICD10 codes
+icd_cui=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/MRCONSO.RRF.txt',data.table=F, quote='')
+icd_cui=icd_cui %>% filter(V12=='ICD10CM',V2=='ENG' ) %>% distinct(V1,V11) %>% rename(umls_medra=V1,ICD10_medra=V11)
+se_icd_missing_icd=merge(filterdrugs_se, icd_cui, by='umls_medra', all.x = T)
+
+nomatch_medra=se_icd_missing_icd%>% select(drugname, medra_se, ICD10_medra) %>% distinct() %>% group_by(drugname) %>% summarise(No.uniquese=length(unique(medra_se)), num_se_icdna =length(unique(medra_se[is.na(ICD10_medra)])), percent_icdse=length(unique(medra_se[!is.na(ICD10_medra)]))/length(unique(medra_se))) 
+head(nomatch_medra)                                                                                                                
+summary(nomatch_medra$percent_icdse)        
+print(paste(round(mean(nomatch_medra$percent_icdse),4),'of SE per drug have icd codes for SE'))
+dim(se_icd_missing_icd) #454440
+print(paste('There are',length(unique(se_icd_missing_icd$drugname)), 'unique drugs with se that match to ICD10. Out of', length(unique(se_icd_missing_icd$medra_se)), 'unique se,',  length(unique(se_icd_missing_icd$medra_se[!is.na(se_icd_missing_icd$ICD10_medra)])),'se have a corresponding ICD10 code.', length(unique(se_icd_missing_icd$ICD10_medra)), 'unique ICD medra codes'))
+##"There are 909 unique drugs with se that match to ICD10. Out of 2601 unique se, 1051 se have a corresponding ICD10 code. 1298 unique ICD medra codes"
+colnames(icd_cui)=c('umls_onlabel','ICD10_label')
+se_icd1=merge(se_icd_missing_icd, icd_cui, by='umls_onlabel',all.x = T)
+dim(se_icd1) #600742
+
+nomatch_label=se_icd1%>% select(drugname, se, ICD10_label) %>% distinct() %>% group_by(drugname) %>% summarise(No.uniquese=length(unique(se)), num_se_icdna =length(unique(se[is.na(ICD10_label)])), percent_icdse=length(unique(se[!is.na(ICD10_label)]))/length(unique(se))) 
+head(nomatch_label)  
+summary(nomatch_label$percent_icdse)
+print(paste(round(mean(nomatch_label$percent_icdse),4),'of SE per drug have icd codes for SE'))
+
+print(paste('There are',length(unique(se_icd1$drugname)), 'unique drugs with se that match to ICD10. Out of', length(unique(se_icd1$se)), 'unique se,',  length(unique(se_icd1$se[!is.na(se_icd1$ICD10_label)])),'se have a corresponding ICD10 code.', length(unique(se_icd1$ICD10_label)), 'unique ICD label codes'))
+# There are 909 unique drugs with se that match to ICD10. Out of 3076 unique se, 1169 se have a corresponding ICD10 code. 1393 unique ICD label codes"
+
+#Took the PT ICD10 code unless there was no ICD10 code then took the label ICD10.
+se_icd1$ICD10_SE<-ifelse(is.na(se_icd1$ICD10_medra),se_icd1$ICD10_label, se_icd1$ICD10_medra )
+print(paste('There are',length(unique(se_icd1$drugname)), 'unique drugs with se that match to ICD10. Out of', length(unique(se_icd1$medra_se)), 'unique se,',  length(unique(se_icd1$medra_se[!is.na(se_icd1$ICD10_SE)])),'se have a corresponding ICD10 code.', length(unique(se_icd1$ICD10_SE)), 'unique ICD medra codes'))
+ "There are 909 unique drugs with se that match to ICD10. Out of 2601 unique se, 1171 se have a corresponding ICD10 code. 1390 unique ICD medra codes"
+nomatchboth=se_icd1%>% select(drugname, medra_se, ICD10_SE) %>% distinct() %>% group_by(drugname) %>% summarise(No.uniquese=length(unique(medra_se)), num_se_icdna =length(unique(medra_se[is.na(ICD10_SE)])), percent_icdse=length(unique(medra_se[!is.na(ICD10_SE)]))/length(unique(medra_se))) 
+summary(nomatchboth$percent_icdse)
+print(paste(round(mean(nomatchboth$percent_icdse),4),'of SE per drug have icd codes for SE'))
+head(nomatchboth)
+``` 
+### Match se with missing ICD10 terms for cui by phecode /icd description
+
+```{r,echo=F}
+#ICDCODES TO SAIGE
+ICD=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/ICD10CM2PHECODE.csv',data.table=F)
+colnames(ICD)[1]='ICD10_SE'
+ICD$PHECODE_DESC=str_to_lower(ICD$PHECODE_DESC)
+ICD$ICD10CM_DESC=str_to_lower(ICD$ICD10CM_DESC)
+
+missingse=se_icd1 %>% filter(is.na(ICD10_SE)) %>% select(se, medra_se,ICD10_SE) %>% distinct()
+missingse$icd_phecode_desc_med=ICD$ICD10_SE[match(missingse$medra_se,ICD$PHECODE_DESC)]
+missingse$icd_desc_med=ICD$ICD10_SE[match(missingse$medra_se,ICD$ICD10CM_DESC)]
+missingse[!is.na(missingse$icd_desc_med),]
+missingse$icd_phecode_desc_LAB=ICD$ICD10_SE[match(missingse$se,ICD$PHECODE_DESC)]
+missingse$icd_desc_lab=ICD$ICD10_SE[match(missingse$se,ICD$ICD10CM_DESC)]
+missingse[!is.na(missingse$icd_phecode_desc_LAB),]
+add_se=missingse[!is.na(missingse$icd_desc_lab)|!is.na(missingse$icd_phecode_desc_LAB)|!is.na(missingse$icd_desc_med)|!is.na(missingse$icd_phecode_desc_med),]
+
+x<-apply(add_se[-1:-3], 1,function(x){
+l=as.data.frame(unique(x[!is.na(x)]))
+colnames(l)='ICD_match'
+return(l)
+})
+x=do.call('rbind',x)
+add_se$ICD_match=x$ICD_match
+add_se=add_se[c(2,8)]
+se_icd12=merge(se_icd1, add_se,by='medra_se',all=T)
+se_icd12$ICD_match=as.character(se_icd12$ICD_match)
+se_icd12$ICD10_SE<-ifelse(is.na(se_icd12$ICD10_SE), se_icd12$ICD_match,se_icd12$ICD10_SE)
+
+#missingse=subset(missingse[1:2], !(medra_se %in% add_se$medra_se))
+#write.xlsx(missingse, 'missingse_noicd.xlsx')
+```
+
+```{r,echo=F}
+
+se_icd2=se_icd12 %>% filter(!is.na(ICD10_SE)) %>% select(-ICD10_medra,-ICD10_label,-ICD_match) %>% distinct()
+print(paste('There are',length(unique(se_icd2$drugname)), 'unique drugs with', length(unique(se_icd2$medra_se[!is.na(se_icd2$ICD10_SE)])),'unique medra se have a corresponding ICD10 code.', length(unique(se_icd2$ICD10_SE)), 'unique ICD label codes'))
+#"There are 878 unique drugs with 1200 unique medra se have a corresponding ICD10 code. 1421 unique ICD label codes
+
+uniquese_icd=se_icd2 %>% select(medra_se,ICD10_SE) %>% distinct()
+
+```
+#### some se have mutliple icd10 codes
+```{r, echo=F}
+
+se1=as.data.frame(se_icd2 %>% select(medra_se, ICD10_SE) %>% distinct() %>% group_by(medra_se) %>% filter(n()>1))
+
+head(se1)
+
+###frequency of each side effect 
+setab_icd=se_icd2 %>% select(drugname, medra_se,ICD10_SE) %>% distinct() %>% 
+ group_by(medra_se,ICD10_SE) %>% tally() %>%
+  arrange(desc(n))
+print(paste('There are',length(unique(se1$medra_se)), 'unique medra_se with multiple ICD10 codes' ))
+
+ 
+###Side effect frequency for each drug once match to icd
+DT::datatable(setab_icd, caption = 'Table 4: Side effect frequency in Sider matched to ICD10 code',filter='top', colnames=c('Side effects','ICD10'  ,'Frequency'), editable = TRUE, extensions = 'Buttons', options = list(dom='Bfrtip', buttons='copy'))
+
+####Side effect frequency summary
+
+summary(setab_icd$n)
+ggplot(setab_icd, aes(x=n))+ geom_histogram(binwidth = 20, color="black", fill="light blue") +
+  labs(x='Side effect frequency',y='Frequency', title='Side effect frequency which match to ICD10 codes') +
+  theme_classic()
+```
+
+
+#### Frequency of se per drugs
+```{r,echo=F}
+
+drugse=se_icd2 %>% select(drugname, medra_se) %>% distinct() %>%  group_by(drugname) %>% tally() %>%
+  arrange(desc(n))
+summary(drugse$n)
+# ggplot(drugse, aes(x=n))+ geom_histogram(bins=20,color="black", fill="light blue") +
+#   labs(x='Number of Side effects per drug',y='Number of drugs', title='Number of Side effects per drug') +
+#   theme_classic()
+
+
+```
+
+### ADR risk score
+```{r,echo=F}
+
+adr=read.xlsx('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/ADR_rankscore.xlsx', sheetIndex=1)
+adr$Name=str_to_lower(adr$Name)
+
+se_icd2$se_adr1=adr$Rank.score[match(se_icd2$medra_se, adr$Name)]
+se_icd2$se_adr2=adr$Rank.score[match(se_icd2$se, adr$Name)]
+se_icd2$se_adr<-ifelse(!is.na(se_icd2$se_adr1), se_icd2$se_adr1, se_icd2$se_adr2)
+se_icd2=se_icd2 %>% select(-se_adr2, -se_adr1)
+
+#868 drugs which have se- icd code
+paste(length(unique(se_icd2$medra_se[!is.na(se_icd2$se_adr)])), 'out of', length(unique(se_icd2$medra_se)), 'unique se have a adr score')
+#"1090 out of 1200 unique se have a adr score
+drugadr=se_icd2  %>% select(drugname, medra_se, se_adr) %>% distinct()
+
+drug1=drugadr %>% group_by(drugname) %>% summarise(total.no_adr=n(), meanadr=mean(se_adr, na.rm=T), sd=sd(se_adr, na.rm = T))
+#DT::datatable(drug1)
+summary(drug1[-1])
+
+adr_se=se_icd2 %>% select(medra_se,se_adr) %>% distinct()
+
+# ggplot(adr_se, aes(x=se_adr))+ geom_histogram(bins = 10, color="black", fill="light blue") +
+#   labs(x='ADR',y='Side effect', title='Distrubution of ADR scores') +
+#   theme_classic()
+
+#get frequency of number of times se has occured across all drugs. (Common SE already removed?)
+adr_se$freq=setab_filtered$n[match(adr_se$medra_se, setab_filtered$medra_se)]
+adr_se=adr_se[!is.na(adr_se$se_adr),]  
+
+#proportion of drugs, divide no of SE by total no of drugs (784) (total no of times SE could have occured)
+#would expect that freq of se is negatively correlated with severity of score
+adr_se$proportion=adr_se$freq/length(unique(drugadr$drugname))
+cor_sp=cor.test(adr_se$se_adr, (adr_se$proportion), method = 'spearman', exact=F)
+cor_sp #-0.08014162  
+
+# ggplot(adr_se, aes(x=se_adr,y=freq))+geom_point()+ geom_smooth() +labs(x='ADR score', y='Se freq', title = 'Correlation between adr score and se frequency') + annotate("text",color='red', x = .86, y = .725, label = paste('spearman coefficient =', round(cor_sp$estimate,4), '\n', 'P value = ',  scientific(cor_sp$p.value, digits = 3))) +  theme_classic() 
+
+#generalized additive mode smoothing. #used spearmans correlation becuase side effect freq not normally distrubted
+
+```
+
+### Match ICD to Phecodes and get ADR phecode score
+```{r,echo=F}
+
+#ICDCODES TO SAIGE
+Phenotype_cateogory=fread('/Users/aineduffy/Documents/PhD/DrugGenetics/Data_downloaded/phecode_definitions1.2.csv',data.table=F)
+#Took mean of ADR scores if multiple for one ICD code
+icd_adr=se_icd2 %>% select(ICD10_SE, se_adr,medra_se) %>% distinct() %>% filter(!is.na(se_adr)) %>% group_by(ICD10_SE) %>% summarise(se_adr=mean(se_adr))
+#1295 codes 
+#ICD$PHECODE_ADR=icd_adr$se_adr[match(ICD$ICD10_SE, icd_adr$ICD10_SE)]
+ICD2=merge(icd_adr,ICD, by='ICD10_SE',all.x=T)
+colnames(ICD2)[c(2,4)]=c('PHECODE_ADR','PHECODE_SE')
+#phecode to icd frequency 
+##each icd maps to only one phecode but multipe icds map to same 
+#10 icd10 codes that dont map to phecodes. #MANUALLY?? Able to map 3 just 
+missing_phecde_icd=ICD2[is.na(ICD2$PHECODE_SE),]
+missing_phecde_icd1=subset(uniquese_icd, (ICD10_SE %in% missing_phecde_icd$ICD10_SE))
+
+se_icd2$ICD10_SE[se_icd2$ICD10_SE=='A43']<-'A43.9'
+se_icd2$ICD10_SE[se_icd2$ICD10_SE=='K83.09']<-'K83.0'
+se_icd2$ICD10_SE[se_icd2$ICD10_SE=='C45']<-'C45.9'
+
+  
+se_icd3=merge(se_icd2, ICD2, by='ICD10_SE',all.x=T)
+
+se_icd3=se_icd3[!duplicated(se_icd3),]
+se_icd3=se_icd3[!is.na(se_icd3$PHECODE_SE),] 
+paste(length(unique(se_icd3$drugname)), ' unique drugs,',length(unique(se_icd3$PHECODE_SE)),'unique phecode se' )
+se_icd3$phecode_category=Phenotype_cateogory$category[match(se_icd3$PHECODE_SE, Phenotype_cateogory$phecode)]
+#Map number of distinct se + their phecodes to the phecode cateogory
+Phecodefreq=as.data.frame(se_icd3 %>% select(PHECODE_SE,phecode_category) %>% distinct() %>% group_by(phecode_category)   %>% tally(name = 'number_phecodes'))
+se_phecodecat=as.data.frame(se_icd3 %>% select(medra_se,phecode_category) %>% distinct() %>% group_by(phecode_category) %>% tally(name = 'number_se'))
+Phefre=merge(Phecodefreq, se_phecodecat,by='phecode_category')
+Phefre1=melt(Phefre,id.var='phecode_category')                         
+
+# ggplot(Phefre1, aes(x=phecode_category, y=value, fill=variable))+ geom_bar(stat = "identity",position='dodge') +theme_classic()+theme(axis.text.x = element_text(angle=-90)) + labs(x='Phecode cateogories', y='Number of side effects') 
+
+
+### Main Indications to ICD
+
+
+
+colnames(icd_cui)[1]='cui_mi'
+mi_label1$ICD10_MI=icd_cui$ICD10[match(mi_label1$cui_mi, icd_cui$cui_mi)]
+paste(length(unique(mi_label1$mi[!is.na(mi_label1$ICD10_MI)])), 'mi have ICD10 code')
+#1957 MI UNIQUE WITH ICD CODE FROM 3821
+
+
+missing_MI=mi_label1 %>% filter(is.na(ICD10_MI)) %>% select(mi,ICD10_MI) %>% distinct()
+missing_MI$icd_phecode_desc_med=ICD$ICD10_SE[match(missing_MI$mi,ICD$PHECODE_DESC)]
+missing_MI$icd_desc_med=ICD$ICD10_SE[match(missing_MI$mi,ICD$ICD10CM_DESC)]
+add_mi=missing_MI[!is.na(missing_MI$icd_desc_med)|!is.na(missing_MI$icd_phecode_desc_med),]
+
+x<-apply(add_mi[-1:-2], 1,function(x){
+l=as.data.frame(unique(x[!is.na(x)]))
+colnames(l)='ICD_match_MI'
+return(l)
+})
+x=do.call('rbind',x)
+add_mi$ICD_match=x$ICD_match_MI
+add_mi=add_mi[c(1,5)]
+mi_label12=merge(mi_label1, add_mi,by='mi',all=T)
+mi_label12$ICD_match=as.character(mi_label12$ICD_match)
+mi_label12$ICD10_MI<-ifelse(is.na(mi_label12$ICD10_MI), mi_label12$ICD_match,mi_label12$ICD10_MI)
+length(unique(mi_label12$mi[!is.na(mi_label12$ICD10_MI)]))#2015.added extra 58 icd mi codes.
+
+colnames(ICD)[c(1,3,4)]=c('ICD10_MI','PHECODE_MI','PHECODE_DESC_MI')
+mi_label2=merge(mi_label12, ICD[c(1,3,4)], by='ICD10_MI')
+
+se_icd4=merge(se_icd3, mi_label2, by=c('drugname','cui_mi','mi'), all.x=T)
+paste(length(unique(se_icd4$drugname)), ' unique drugs,',length(unique(se_icd4$PHECODE_SE)),'unique phecode se', length(unique(se_icd4$PHECODE_MI)) )
+
+#MI AND SE which match on phecode 
+matchingphecode_mi_se= se_icd4 %>% select(medra_se,ICD10_SE, PHECODE_SE, mi, ICD10_MI, PHECODE_MI) %>% filter(PHECODE_SE==PHECODE_MI) %>% distinct()
+
+# DT::datatable(matchingphecode_mi_se)
+
+remove.matchse_miphecode=se_icd4[which(se_icd4$PHECODE_SE!=se_icd4$PHECODE_MI|is.na(se_icd4$PHECODE_MI)),]
+
+#ADR SCORE THAT WAS MAPPED TO THE INITIAL SE. 
+adr_phe=remove.matchse_miphecode %>% select(medra_se,PHECODE_SE, se_adr, PHECODE_ADR) %>% filter(!is.na(se_adr))%>% distinct()
+paste(length(unique(adr_phe$medra_se)), 'unique se which map to', length(unique(adr_phe$PHECODE_SE)), 'unique phecode term')
+#""1090 unique se which map to 766 unique phecode term"
+adr_phe1=remove.matchse_miphecode %>% select(PHECODE_SE, se_adr, PHECODE_ADR) %>% distinct() %>% filter(!is.na(se_adr))
+adr_dups=adr_phe[duplicated(adr_phe$medra_se),]
+adr_dup_all=subset(adr_phe,(medra_se %in% adr_dups$medra_se))
+adr_dup_all=adr_dup_all[order(adr_dup_all$medra_se,adr_dup_all$PHECODE_SE),]
+adr_dup_all=adr_dup_all[!duplicated(adr_dup_all),]
+icd_adr=se_icd2 %>% select(ICD10_SE, se_adr,medra_se) %>% distinct() %>% filter(!is.na(se_adr)) %>% group_by(ICD10_SE) %>% summarise(PHECODE_ADR=mean(se_adr))
+finalse_df= as.data.frame(remove.matchse_miphecode %>% select(drugname,PHECODE_SE, PHECODE_ADR) %>% distinct() %>% group_by(drugname, PHECODE_SE) %>% summarise(PHECODE_ADR=mean(PHECODE_ADR)))
+paste('Final datset is', nrow(finalse_df), 'rows,', length(unique(finalse_df$drugname)), 'drugs and', length(unique(finalse_df$PHECODE_SE)),'phecode se where',length(unique(finalse_df$PHECODE_SE[!is.na(finalse_df$PHECODE_ADR)])),'phecodes have a matching se adr score')
+#Final datset is 13129 rows, 878 drugs and 816 phecode se where 762 phecodes have a matching se adr score"
+##MATCH FINAL DATASET TO GENES, GET TAU, TPM, COLOC RESULTS
+### Match to entrez id  
+
+```
