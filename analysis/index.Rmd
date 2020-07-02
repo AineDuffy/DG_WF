@@ -13,7 +13,7 @@ Welcome to my research website.
 Click on this [link](https://aineduffy.github.io/DG_WF/Filtering_sider2_dataset.html) to see side effect results.
 --Using medra PT (preferred term) SE unless no icd code and then takes LT (lowest term) label SE
 
-Click on this [link](https://aineduffy.github.io/DG_WF/Drug_dataset_v4.html) to see data descriptives and first pass at model.
+Click on this [link](https://aineduffy.github.io/DG_WF/Drug_Datasest_V4.html) to see data descriptives and first pass at model.
 
 ### Previous version of files and models
 Click on this [link](https://aineduffy.github.io/DG_WF/siderdata_intial.html) to see side effect results.
