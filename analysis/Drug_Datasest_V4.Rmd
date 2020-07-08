@@ -21,6 +21,12 @@ library(DT)
 library(scales)
 library(gridExtra)
 library(lme4)
+library(ggraph)
+library(igraph)
+library(tidyverse)
+library(viridis)
+library(circlepackeR) 
+library(data.tree)
 ```
 
 ### Overview of dataset 
@@ -73,7 +79,60 @@ dim(allphecode) #1534
 
 ggplot(allphecode, aes(x=phecode, fill=source)) +geom_histogram(bins=40) + facet_wrap(~category, scales='free')
 
+
+##circle packing plot https://www.r-graph-gallery.com/338-interactive-circle-packing-with-circlepacker
+#Phecode hierarchy 
+phecode_dat1=unique(dataset[,4])
+paste(length(phecode_dat1[phecode_dat1%%1==0]), 'parent phecode terms') #223 parent phecode terms
+paste(length(phecode_dat1[phecode_dat1%%1!=0]), 'child phecode terms:', 
+length(phecode_dat1[grep('\\.[0-9]\\b', phecode_dat1)]), 'terms one class down and', 
+length(phecode_dat1[grep('\\.[0-9][0-9]\\b', phecode_dat1)]), 'two classes down')   
+
+allcat=as.data.frame(dataset %>% distinct(drugname, PHECODE_SE ) %>% group_by(PHECODE_SE)  %>% summarise(no_drugs=length(unique(drugname))))
+allcat$category=allphecode$category[match(allcat$PHECODE_SE, allphecode$phecode)]
+allcat$level2<-trunc(allcat$PHECODE_SE)
+allcat$level3<-as.numeric(paste0(allcat$level2,'.',str_sub(allcat$PHECODE_SE %% 1, start=3, end=3)))
+allcat$category=gsub('endocrine/metabolic','endocrine_metabolic', allcat$category)
+allcat$pathString=paste("category",allcat$category, allcat$level2,allcat$PHECODE_SE,  sep = "/")
+population2 <- as.Node(allcat)
+allcat_plot <- circlepackeR(population2, size = "no_drugs")
+#allcat_plot <- circlepackeR(population2, size = "no_drugs", color_min = "hsl(56,80%,80%)", color_max = "hsl(341,30%,40%)")
+
+allcat_plot
 ```
+
+```{r}
+
+#library(ggraph)
+#library(igraph)
+#library(dplyr)
+
+
+#df <- data.frame(group=c("root", "root", "a","a","b","b","b"),    
+                 #subitem=c("a", "b", "x","y","z","u","v"), 
+                 #size=c(0, 0, 6,2,3,2,5))
+
+#df2<-allcat[allcat$category=='dermatologic',]
+# create a dataframe with the vertices' attributes
+#df3<-df2[c(2,4,5)]
+#vertices2 <- df2 %>% 
+ # distinct(level2, no_drugs) %>% 
+#  add_row(subitem = "root", size = 0)
+#df3$level2=gsub('^','parent_',df3$level2)
+#vertices <- as.data.frame(rbind(df3 %>% distinct(level2, no_drugs) %>% group_by(level3=level2)  %>% summarise(no_drugs=sum(no_drugs)),df3 %>% distinct(level3, no_drugs)  %>% group_by(level3)  %>% summarise(no_drugs=sum(no_drugs))))
+
+
+#graph <- graph_from_data_frame(df3, vertices = vertices)
+
+#ggraph(graph, layout = "circlepack", weight = size) + 
+ # geom_node_circle(aes(fill =depth)) +
+# adding geom_text to see which circle is which node 
+  #geom_text(aes(x = x, y = y, label = paste(name, "size=", size))) +
+  #coord_fixed()
+
+
+```
+
 
 ### Data descriptives 
 ``` {r, echo=F}
