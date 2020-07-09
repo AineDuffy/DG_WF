@@ -99,6 +99,24 @@ allcat_plot <- circlepackeR(population2, size = "no_drugs")
 #allcat_plot <- circlepackeR(population2, size = "no_drugs", color_min = "hsl(56,80%,80%)", color_max = "hsl(341,30%,40%)")
 
 allcat_plot
+#Phecode hierarchy 
+
+coloc_dat1=unique(dataset[,10])
+paste(length(coloc_dat1[coloc_dat1%%1==0]), 'parent phecode terms') #223 parent phecode terms
+paste(length(coloc_dat1[coloc_dat1%%1!=0]), 'child phecode terms:', 
+length(coloc_dat1[grep('\\.[0-9]\\b', coloc_dat1)]), 'terms one class down and', 
+length(coloc_dat1[grep('\\.[0-9][0-9]\\b', coloc_dat1)]), 'two classes down')   
+
+allcat_coloc=as.data.frame(dataset %>% distinct(drugname, coloc08_phecode ) %>% group_by(coloc08_phecode)  %>% summarise(no_drugs=length(unique(drugname))))
+allcat_coloc$category=allphecode$category[match(allcat_coloc$coloc08_phecode, allphecode$phecode)]
+allcat_coloc$level2<-trunc(allcat_coloc$coloc08_phecode)
+allcat_coloc$level3<-as.numeric(paste0(allcat_coloc$level2,'.',str_sub(allcat_coloc$coloc08_phecode %% 1, start=3, end=3)))
+allcat_coloc$category=gsub('endocrine/metabolic','endocrine_metabolic', allcat_coloc$category)
+allcat_coloc$pathString=paste("category",allcat_coloc$category, allcat_coloc$level2,allcat_coloc$coloc08_phecode,  sep = "/")
+allcat_coloc=allcat_coloc[!is.na(allcat_coloc$category),]
+population2_coloc <- as.Node(allcat_coloc)
+allcat_plot_coloc <- circlepackeR(population2_coloc, size = "no_drugs", color_min = "hsl(56,80%,80%)", color_max = "hsl(341,30%,40%)")
+allcat_plot_coloc
 ```
 
 ```{r}
