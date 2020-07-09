@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Aine Duffy" />
+
+
+<title>Drug_dataset_V4</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DG_WF</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AineDuffy/DG_WF">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Drug_dataset_V4</h1>
+<h4 class="author">Aine Duffy</h4>
+<h4 class="date">7/01/2020</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-07-09
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>DG_WF/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200414code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200414)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200414code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200414)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree446dc23a159971bdc459b9ec12d4a8b4ff976ea1targetblank446dc23a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/AineDuffy/DG_WF/tree/446dc23a159971bdc459b9ec12d4a8b4ff976ea1" target="_blank">446dc23</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomAineDuffyDGWFtree446dc23a159971bdc459b9ec12d4a8b4ff976ea1targetblank446dc23a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/AineDuffy/DG_WF/tree/446dc23a159971bdc459b9ec12d4a8b4ff976ea1" target="_blank">446dc23</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/Maketable_sider2_updated.r
+    Untracked:  analysis/missingse_noicd.xlsx
+    Untracked:  analysis/siderdata_v4.Rmd
+
+Unstaged changes:
+    Modified:   analysis/Drug_Dataset_V1.Rmd
+    Modified:   analysis/Drug_dataset_SIDER2.Rmd
+    Modified:   analysis/siderdata_intial.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Models_drugdataset.Rmd</code>) and HTML (<code>docs/Models_drugdataset.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AineDuffy/DG_WF/blob/446dc23a159971bdc459b9ec12d4a8b4ff976ea1/analysis/Models_drugdataset.Rmd" target="_blank">446dc23</a>
+</td>
+<td>
+AineDuffy
+</td>
+<td>
+2020-07-09
+</td>
+<td>
+Running models. phecodes collapsed
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="all-phecodes" class="section level3">
+<h3>All Phecodes</h3>
+<ol style="list-style-type: decimal">
+<li>Dataset - 590 unique drugs. 2939 unique drug-gene pairs X 701 unique SE = 2,060,239 lines</li>
+</ol>
+<pre><code>[1] 7258727      10</code></pre>
+<pre><code>[1] 2939    3</code></pre>
+<pre><code>                drugname entrez_id  symbol PheCode PHECODE_SE omim_phecode
+891           carvedilol      2697    GJA1   276.5          1            0
+2004          furosemide       760     CA2   276.5          1            0
+2024          furosemide      6557 SLC12A1   276.5          1            0
+2168 hydrochlorothiazide       760     CA2   276.5          1            0
+2188 hydrochlorothiazide      3778  KCNMA1   276.5          1            0
+2465           lepirudin      2147      F2   276.5          1            0
+     coloc08_phecode
+891                0
+2004               0
+2024               0
+2168               0
+2188               0
+2465               0</code></pre>
+<pre><code>$PHECODE_SE
+      0       1 
+2015052   45187 
+
+$omim_phecode
+      0       1 
+2060212      27 
+
+$coloc08_phecode
+      0       1 
+2059457     782 </code></pre>
+<p>Number of phecode se, coloc and omim matches per drug-gene pair</p>
+<pre><code>`summarise()` regrouping output by &#39;drugname&#39; (override with `.groups` argument)</code></pre>
+<pre><code># A tibble: 6 x 5
+# Groups:   drugname [1]
+  drugname    entrez_id total_se total_coloc total_omim
+  &lt;chr&gt;           &lt;int&gt;    &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 acamprosate      2554       37           0          0
+2 acamprosate      2555       37           1          0
+3 acamprosate      2556       37           0          0
+4 acamprosate      2557       37           1          0
+5 acamprosate      2558       37           0          0
+6 acamprosate      2559       37           0          0</code></pre>
+<pre><code>                                total percentage  Mean   Std
+se phecode trait per DG pair    45187       2.19 15.37 15.26
+coloc phecode trait per DG pair   782       0.04  0.27  0.66
+omim phecode trait per DG pair     27       0.00  0.01  0.10</code></pre>
+<div id="chisq-test" class="section level4">
+<h4>Chisq test</h4>
+<p>1.Phecode se and OMIM phecode</p>
+<pre><code>               omim phecode Yes omim phecode No
+Phecode se yes               27           45160
+Phecode se no                 0         2015052</code></pre>
+<pre><code>Warning in chisq.test(Datasetv3_dg_omim, correct = FALSE): Chi-squared
+approximation may be incorrect</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Datasetv3_dg_omim
+X-squared = 1204, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Datasetv3_dg_omim
+X-squared = 1204, df = NA, p-value = 0.0004998</code></pre>
+<p>2.Phecode se and coloc phecode</p>
+<pre><code>               coloc phecode Yes coloc phecode No
+Phecode se yes               782            44405
+Phecode se no                  0          2015052</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Datasetv3_dg_coloc
+X-squared = 34885, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Datasetv3_dg_coloc
+X-squared = 34885, df = NA, p-value = 0.0004998</code></pre>
+</div>
+<div id="models" class="section level4">
+<h4>Models</h4>
+<p>1.logistic model</p>
+<pre class="r"><code>logmod_coloc=glm(PHECODE_SE~coloc08_phecode, data = Byphecode3, family = &#39;binomial&#39;)
+summary(logmod_coloc)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE ~ coloc08_phecode, family = &quot;binomial&quot;, 
+    data = Byphecode3)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2088  -0.2088  -0.2088  -0.2088   2.7701  
+
+Coefficients:
+                 Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)     -3.815048   0.004798 -795.212   &lt;2e-16 ***
+coloc08_phecode 17.381115  19.146265    0.908    0.364    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 434583  on 2060238  degrees of freedom
+Residual deviance: 428596  on 2060237  degrees of freedom
+AIC: 428600
+
+Number of Fisher Scoring iterations: 12</code></pre>
+<pre class="r"><code>logmod_omim=glm(PHECODE_SE~omim_phecode, data = Byphecode3, family = &#39;binomial&#39;)
+summary(logmod_omim)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE ~ omim_phecode, family = &quot;binomial&quot;, 
+    data = Byphecode3)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2105  -0.2105  -0.2105  -0.2105   2.7642  
+
+Coefficients:
+              Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)  -3.798189   0.004758 -798.253   &lt;2e-16 ***
+omim_phecode 14.364216  22.991636    0.625    0.532    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 434583  on 2060238  degrees of freedom
+Residual deviance: 434377  on 2060237  degrees of freedom
+AIC: 434381
+
+Number of Fisher Scoring iterations: 9</code></pre>
+<p>2.mixed model</p>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE ~ coloc08_phecode + (1 | PheCode)
+   Data: Byphecode3
+
+      AIC       BIC    logLik  deviance  df.resid 
+ 364773.2  364810.9 -182383.6  364767.2   2060236 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.558 -0.160 -0.089 -0.047 38.760 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ PheCode (Intercept) 2.612    1.616   
+Number of obs: 2060239, groups:  PheCode, 701
+
+Fixed effects:
+                Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)     -4.82092    0.02682 -179.727  &lt; 2e-16 ***
+coloc08_phecode 25.05606    4.00030    6.264 3.76e-10 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+colc08_phcd 0.012 </code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+unable to evaluate scaled gradient</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Model failed to converge: degenerate Hessian with 1 negative eigenvalues</code></pre>
+<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE ~ omim_phecode + (1 | PheCode)
+   Data: Byphecode3
+
+      AIC       BIC    logLik  deviance  df.resid 
+ 369804.1  369841.7 -184899.0  369798.1   2060236 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.553 -0.164 -0.091 -0.047 38.717 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ PheCode (Intercept) 2.616    1.617   
+Number of obs: 2060239, groups:  PheCode, 701
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)    -4.80289    0.06228 -77.120   &lt;2e-16 ***
+omim_phecode   20.71883 1897.76138   0.011    0.991    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+omim_phecod 0.000 
+convergence code: 0
+unable to evaluate scaled gradient
+Model failed to converge: degenerate  Hessian with 1 negative eigenvalues</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE ~ coloc08_phecode + omim_phecode, family = &quot;binomial&quot;, 
+    data = Byphecode3)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2087  -0.2087  -0.2087  -0.2087   2.7704  
+
+Coefficients:
+                  Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)      -3.815656   0.004799 -795.102   &lt;2e-16 ***
+coloc08_phecode  17.381723  19.146265    0.908    0.364    
+omim_phecode     17.381723 103.039925    0.169    0.866    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 434583  on 2060238  degrees of freedom
+Residual deviance: 428389  on 2060236  degrees of freedom
+AIC: 428395
+
+Number of Fisher Scoring iterations: 12</code></pre>
+</div>
+</div>
+<div id="all-phecodes.-genes-collapsed" class="section level3">
+<h3>All Phecodes. Genes collapsed</h3>
+<ol start="2" style="list-style-type: decimal">
+<li>Dataset - 590 unique drugs X 701 unique SE = 395,808 lines All genes aggregated per drug</li>
+</ol>
+<pre><code>       drugname PHECODE_SE omim_phecode coloc08_phecode Phecode
+1   acamprosate          0            0               0   276.5
+2    acebutolol          0            0               0   276.5
+3   aceclofenac          0            0               0   276.5
+4 acetaminophen          0            0               0   276.5
+5 acetazolamide          0            0               0   276.5
+6     acitretin          0            0               0   276.5</code></pre>
+<pre><code>$PHECODE_SE
+     0      1 
+405265   8325 
+
+$omim_phecode
+     0      1 
+413564     26 
+
+$coloc08_phecode
+     0      1 
+413062    528 </code></pre>
+<p>Number of unique phecode se, coloc and omim matches per drug</p>
+<pre><code>`summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code># A tibble: 6 x 4
+  drugname      total_se total_coloc total_omim
+  &lt;chr&gt;            &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 acamprosate         37           9          0
+2 acebutolol           6           0          0
+3 aceclofenac          1           0          0
+4 acetaminophen        5           0          0
+5 acetazolamide        6           1          0
+6 acitretin           27           4          0</code></pre>
+<pre><code>                             total percentage  Mean   Std
+se phecode trait per drug     8325       2.01 14.11 14.10
+coloc phecode trait per drug   528       0.13  0.89  1.75
+omim phecode trait per drug     26       0.01  0.04  0.22</code></pre>
+<div id="chisq-test-1" class="section level4">
+<h4>Chisq test</h4>
+<p>1.Phecode se and OMIM phecode</p>
+<pre><code>Warning in chisq.test(Datasetv3_dg_omim_aggregate, correct = FALSE): Chi-squared
+approximation may be incorrect</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Datasetv3_dg_omim_aggregate
+X-squared = 1265.8, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Datasetv3_dg_omim_aggregate
+X-squared = 1265.8, df = NA, p-value = 0.0004998</code></pre>
+<p>2.Phecode se and coloc phecode</p>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Datasetv3_dg_coloc_aggregate
+X-squared = 25736, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Datasetv3_dg_coloc_aggregate
+X-squared = 25736, df = NA, p-value = 0.0004998</code></pre>
+</div>
+<div id="models-1" class="section level4">
+<h4>Models</h4>
+<p>1.logistic model</p>
+<pre class="r"><code>logmod_coloc_drug=glm(PHECODE_SE~coloc08_phecode, data = Byphecode_agggregategene, family = &#39;binomial&#39;)
+summary(logmod_coloc_drug)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE ~ coloc08_phecode, family = &quot;binomial&quot;, 
+    data = Byphecode_agggregategene)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.1952  -0.1952  -0.1952  -0.1952   2.8178  
+
+Coefficients:
+                Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)     -3.95080    0.01143 -345.550   &lt;2e-16 ***
+coloc08_phecode 19.51687   63.33805    0.308    0.758    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 81510  on 413589  degrees of freedom
+Residual deviance: 77352  on 413588  degrees of freedom
+AIC: 77356
+
+Number of Fisher Scoring iterations: 14</code></pre>
+<pre class="r"><code>logmod_omim_drug=glm(PHECODE_SE~omim_phecode, data = Byphecode_agggregategene, family = &#39;binomial&#39;)
+summary(logmod_omim_drug)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE ~ omim_phecode, family = &quot;binomial&quot;, 
+    data = Byphecode_agggregategene)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2014  -0.2014  -0.2014  -0.2014   2.7959  
+
+Coefficients:
+             Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)  -3.88841    0.01109 -350.657   &lt;2e-16 ***
+omim_phecode 16.45447   63.68748    0.258    0.796    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 81510  on 413589  degrees of freedom
+Residual deviance: 81307  on 413588  degrees of freedom
+AIC: 81311
+
+Number of Fisher Scoring iterations: 11</code></pre>
+<p>2.Phecode se and coloc phecode</p>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE ~ coloc08_phecode + (1 | Phecode)
+   Data: Byphecode_agggregategene
+
+     AIC      BIC   logLik deviance df.resid 
+ 70003.5  70036.3 -34998.8  69997.5   413587 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.3936 -0.1527 -0.0933 -0.0554 18.0578 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Phecode (Intercept) 1.466    1.211   
+Number of obs: 413590, groups:  Phecode, 701
+
+Fixed effects:
+                Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)     -4.60914    0.04844 -95.143   &lt;2e-16 ***
+coloc08_phecode 34.07874   13.64489   2.498   0.0125 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+colc08_phcd -0.002</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Model failed to converge with max|grad| = 0.0284446 (tol = 0.002, component 1)</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?</code></pre>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE ~ omim_phecode + (1 | Phecode)
+   Data: Byphecode_agggregategene
+
+     AIC      BIC   logLik deviance df.resid 
+ 73620.6  73653.4 -36807.3  73614.6   413587 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.3909 -0.1583 -0.0936 -0.0664 17.9308 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Phecode (Intercept) 1.48     1.217   
+Number of obs: 413590, groups:  Phecode, 701
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -4.546e+00  2.608e-03 -1743.1   &lt;2e-16 ***
+omim_phecode  7.098e+03  8.128e+00   873.3   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+omim_phecod 0.000 
+convergence code: 0
+Model failed to converge with max|grad| = 0.0284446 (tol = 0.002, component 1)
+Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?</code></pre>
+</div>
+</div>
+<div id="grouped-phecode-child-terms-by-lowest-level" class="section level3">
+<h3>Grouped Phecode child terms by lowest level</h3>
+<ol style="list-style-type: decimal">
+<li>Dataset - 590 unique drugs. 2939 unique drug-gene pairs X 651 unique SE = 2,060,239 lines</li>
+</ol>
+<pre><code>   drugname entrez_id symbol PHECODE_SE PHECODE_ADR withdrawn       Tau
+1 lepirudin      2147     F2      276.5   0.6788094      &lt;NA&gt; 0.9735913
+2 lepirudin      2147     F2      276.5   0.6788094      &lt;NA&gt; 0.9735913
+3 lepirudin      2147     F2      276.5   0.6788094      &lt;NA&gt; 0.9735913
+4 lepirudin      2147     F2      276.5   0.6788094      &lt;NA&gt; 0.9735913
+5 lepirudin      2147     F2      276.5   0.6788094      &lt;NA&gt; 0.9735913
+6 lepirudin      2147     F2      276.5   0.6788094      &lt;NA&gt; 0.9735913
+  omim_phecode coloc08_phecode oe_lof_upper PHECODE_SE_grouped1
+1        627.4           365.0        0.536                 0.5
+2        627.4           401.1        0.536                 0.5
+3        627.4           451.0        0.536                 0.5
+4        627.4           401.1        0.536                 0.5
+5        627.4           451.0        0.536                 0.5
+6        627.4           429.3        0.536                 0.5
+  PHECODE_SE_grouped
+1              276.5
+2              276.5
+3              276.5
+4              276.5
+5              276.5
+6              276.5</code></pre>
+<pre><code>[1] 7258727      16</code></pre>
+<pre><code>[1] 2939    3</code></pre>
+<pre><code>                drugname entrez_id  symbol PheCode PHECODE_SE_grouped
+883           carvedilol      2697    GJA1   276.5                  1
+1991          furosemide       760     CA2   276.5                  1
+2011          furosemide      6557 SLC12A1   276.5                  1
+2154 hydrochlorothiazide       760     CA2   276.5                  1
+2174 hydrochlorothiazide      3778  KCNMA1   276.5                  1
+2450           lepirudin      2147      F2   276.5                  1
+     coloc08_phecode_grouped omim_phecode_grouped
+883                        0                    0
+1991                       0                    0
+2011                       0                    0
+2154                       0                    0
+2174                       0                    0
+2450                       0                    0</code></pre>
+<pre><code>$PHECODE_SE_grouped
+      0       1 
+1869654   43635 
+
+$coloc08_phecode_grouped
+      0       1 
+1912346     943 
+
+$omim_phecode_grouped
+      0       1 
+1913262      27 </code></pre>
+<p>Number of phecode se, coloc and omim matches per drug-gene pair once child terms collapsed</p>
+<pre><code>`summarise()` regrouping output by &#39;drugname&#39; (override with `.groups` argument)</code></pre>
+<pre><code># A tibble: 6 x 5
+# Groups:   drugname [1]
+  drugname    entrez_id total_se total_coloc total_omim
+  &lt;chr&gt;           &lt;int&gt;    &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 acamprosate      2554       35           0          0
+2 acamprosate      2555       35           1          0
+3 acamprosate      2556       35           0          0
+4 acamprosate      2557       35           1          0
+5 acamprosate      2558       35           1          0
+6 acamprosate      2559       35           0          0</code></pre>
+<pre><code>                                total percentage  Mean   Std
+se phecode trait per DG pair    43635       2.28 14.85 14.58
+coloc phecode trait per DG pair   943       0.05  0.32  0.73
+omim phecode trait per DG pair     27       0.00  0.01  0.10</code></pre>
+<div id="chisq-test-2" class="section level4">
+<h4>Chisq test</h4>
+<p>1.Phecode se and OMIM phecode</p>
+<pre><code>               omim phecode Yes omim phecode No
+Phecode se yes               27           43608
+Phecode se no                 0         1869654</code></pre>
+<pre><code>Warning in chisq.test(Dataset_dg_omim_collapse, correct = FALSE): Chi-squared
+approximation may be incorrect</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Dataset_dg_omim_collapse
+X-squared = 1156.9, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Dataset_dg_omim_collapse
+X-squared = 1156.9, df = NA, p-value = 0.0004998</code></pre>
+<p>1.Phecode se and coloc phecode</p>
+<pre><code>               coloc phecode Yes coloc phecode No
+Phecode se yes               943            42692
+Phecode se no                  0          1869654</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Dataset_dg_coloc_collapse
+X-squared = 40425, df = 1, p-value &lt; 2.2e-16</code></pre>
+</div>
+<div id="models-2" class="section level4">
+<h4>Models</h4>
+<p>1.logistic model</p>
+<pre class="r"><code>logmod_coloc_collapsed=glm(PHECODE_SE_grouped~coloc08_phecode_grouped, data = Byphecode2_collapsed, family = &#39;binomial&#39;)
+summary(logmod_coloc_collapsed)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE_grouped ~ coloc08_phecode_grouped, family = &quot;binomial&quot;, 
+    data = Byphecode2_collapsed)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2125  -0.2125  -0.2125  -0.2125   2.7576  
+
+Coefficients:
+                         Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)             -3.779497   0.004895 -772.155   &lt;2e-16 ***
+coloc08_phecode_grouped 18.345565  28.746080    0.638    0.523    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 416211  on 1913288  degrees of freedom
+Residual deviance: 409060  on 1913287  degrees of freedom
+AIC: 409064
+
+Number of Fisher Scoring iterations: 13</code></pre>
+<pre class="r"><code>logmod_omim_collapsed=glm(PHECODE_SE_grouped~omim_phecode_grouped, data = Byphecode2_collapsed, family = &#39;binomial&#39;)
+summary(logmod_omim_collapsed)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE_grouped ~ omim_phecode_grouped, family = &quot;binomial&quot;, 
+    data = Byphecode2_collapsed)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2147  -0.2147  -0.2147  -0.2147   2.7500  
+
+Coefficients:
+                      Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)          -3.758268   0.004844 -775.826   &lt;2e-16 ***
+omim_phecode_grouped 14.324296  22.991636    0.623    0.533    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 416211  on 1913288  degrees of freedom
+Residual deviance: 416006  on 1913287  degrees of freedom
+AIC: 416010
+
+Number of Fisher Scoring iterations: 9</code></pre>
+<p>2.mixed model</p>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE_grouped ~ coloc08_phecode_grouped + (1 | PheCode)
+   Data: Byphecode2_collapsed
+
+      AIC       BIC    logLik  deviance  df.resid 
+ 346598.8  346636.2 -173296.4  346592.8   1913286 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.558 -0.164 -0.091 -0.047 38.676 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ PheCode (Intercept) 2.615    1.617   
+Number of obs: 1913289, groups:  PheCode, 651
+
+Fixed effects:
+                        Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)             -4.79056    0.03065 -156.320   &lt;2e-16 ***
+coloc08_phecode_grouped 25.14552   13.07288    1.923   0.0544 .  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+clc08_phcd_ -0.004</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+unable to evaluate scaled gradient</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Model failed to converge: degenerate Hessian with 1 negative eigenvalues</code></pre>
+<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE_grouped ~ omim_phecode_grouped + (1 | PheCode)
+   Data: Byphecode2_collapsed
+
+      AIC       BIC    logLik  deviance  df.resid 
+ 352342.9  352380.3 -176168.5  352336.9   1913286 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.559 -0.165 -0.093 -0.047 38.633 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ PheCode (Intercept) 2.623    1.619   
+Number of obs: 1913289, groups:  PheCode, 651
+
+Fixed effects:
+                       Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)            -4.76988    0.06467 -73.756   &lt;2e-16 ***
+omim_phecode_grouped   21.17861 2388.47753   0.009    0.993    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+omm_phcd_gr 0.000 
+convergence code: 0
+unable to evaluate scaled gradient
+Model failed to converge: degenerate  Hessian with 1 negative eigenvalues</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE_grouped ~ coloc08_phecode_grouped + 
+    omim_phecode_grouped, family = &quot;binomial&quot;, data = Byphecode2_collapsed)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2124  -0.2124  -0.2124  -0.2124   2.7578  
+
+Coefficients:
+                          Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)              -3.780130   0.004896 -772.046   &lt;2e-16 ***
+coloc08_phecode_grouped  18.346198  28.746080    0.638    0.523    
+omim_phecode_grouped     18.346198 169.884042    0.108    0.914    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 416211  on 1913288  degrees of freedom
+Residual deviance: 408855  on 1913286  degrees of freedom
+AIC: 408861
+
+Number of Fisher Scoring iterations: 13</code></pre>
+</div>
+</div>
+<div id="grouped-phecode-child-terms-by-lowest-level.-genes-collapsed" class="section level3">
+<h3>Grouped Phecode child terms by lowest level. Genes collapsed</h3>
+<ol start="2" style="list-style-type: decimal">
+<li>Dataset - 590 unique drugs X 651 unique SE = 384,090 lines All genes aggregated per drug</li>
+</ol>
+<pre><code>       drugname PHECODE_SE_grouped coloc08_phecode_grouped omim_phecode_grouped
+1   acamprosate                  0                       0                    0
+2    acebutolol                  0                       0                    0
+3   aceclofenac                  0                       0                    0
+4 acetaminophen                  0                       0                    0
+5 acetazolamide                  0                       0                    0
+6     acitretin                  0                       0                    0
+  Phecode
+1   276.5
+2   276.5
+3   276.5
+4   276.5
+5   276.5
+6   276.5</code></pre>
+<pre><code>$PHECODE_SE_grouped
+     0      1 
+376011   8079 
+
+$coloc08_phecode_grouped
+     0      1 
+383474    616 
+
+$omim_phecode_grouped
+     0      1 
+384064     26 </code></pre>
+<p>Number of unique phecode se, coloc and omim matches per drug once child terms collapsed</p>
+<pre><code>`summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code># A tibble: 6 x 4
+  drugname      total_se total_coloc total_omim
+  &lt;chr&gt;            &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 acamprosate         35          10          0
+2 acebutolol           6           0          0
+3 aceclofenac          1           0          0
+4 acetaminophen        5           0          0
+5 acetazolamide        6           2          0
+6 acitretin           27           4          0</code></pre>
+<pre><code>                             total percentage  Mean   Std
+se phecode trait per drug     8079       2.10 13.69 13.61
+coloc phecode trait per drug   616       0.16  1.04  1.94
+omim phecode trait per drug     26       0.01  0.04  0.22</code></pre>
+<div id="chisq-test-3" class="section level4">
+<h4>Chisq test</h4>
+<p>1.Phecode se and OMIM phecode</p>
+<pre><code>Warning in chisq.test(Datasetv3_dg_omim_aggregate_collapse, correct = FALSE):
+Chi-squared approximation may be incorrect</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Datasetv3_dg_omim_aggregate_collapse
+X-squared = 1210.2, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Datasetv3_dg_omim_aggregate_collapse
+X-squared = 1210.2, df = NA, p-value = 0.0004998</code></pre>
+<p>2.Phecode se and coloc phecode</p>
+<pre><code>
+    Pearson&#39;s Chi-squared test
+
+data:  Datasetv3_dg_coloc_aggregate_collapse
+X-squared = 28716, df = 1, p-value &lt; 2.2e-16</code></pre>
+<pre><code>
+    Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+    replicates)
+
+data:  Datasetv3_dg_coloc_aggregate_collapse
+X-squared = 28716, df = NA, p-value = 0.0004998</code></pre>
+</div>
+<div id="models-3" class="section level4">
+<h4>Models</h4>
+<p>1.logistic model</p>
+<pre class="r"><code>logmod_coloc_drug_collapse=glm(PHECODE_SE_grouped~coloc08_phecode_grouped, data = Byphecode_agggregategene_collapsed, family = &#39;binomial&#39;)
+summary(logmod_coloc_drug_collapse)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE_grouped ~ coloc08_phecode_grouped, family = &quot;binomial&quot;, 
+    data = Byphecode_agggregategene_collapsed)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.1983  -0.1983  -0.1983  -0.1983   2.8069  
+
+Coefficients:
+                        Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)             -3.91966    0.01169 -335.303   &lt;2e-16 ***
+coloc08_phecode_grouped 19.48573   58.63964    0.332     0.74    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 78383  on 384089  degrees of freedom
+Residual deviance: 73578  on 384088  degrees of freedom
+AIC: 73582
+
+Number of Fisher Scoring iterations: 14</code></pre>
+<pre class="r"><code>logmod_omim_drug_collapse=glm(PHECODE_SE_grouped~omim_phecode_grouped, data = Byphecode_agggregategene_collapsed, family = &#39;binomial&#39;)
+summary(logmod_omim_drug_collapse)</code></pre>
+<pre><code>
+Call:
+glm(formula = PHECODE_SE_grouped ~ omim_phecode_grouped, family = &quot;binomial&quot;, 
+    data = Byphecode_agggregategene_collapsed)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.2059  -0.2059  -0.2059  -0.2059   2.7802  
+
+Coefficients:
+                     Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept)          -3.84357    0.01126 -341.281   &lt;2e-16 ***
+omim_phecode_grouped 16.40964   63.68748    0.258    0.797    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 78383  on 384089  degrees of freedom
+Residual deviance: 78182  on 384088  degrees of freedom
+AIC: 78186
+
+Number of Fisher Scoring iterations: 11</code></pre>
+<p>2.mixed model</p>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE_grouped ~ coloc08_phecode_grouped + (1 | Phecode)
+   Data: Byphecode_agggregategene_collapsed
+
+     AIC      BIC   logLik deviance df.resid 
+ 66512.6  66545.1 -33253.3  66506.6   384087 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.3936 -0.1581 -0.0936 -0.0663 17.9845 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Phecode (Intercept) 1.469    1.212   
+Number of obs: 384090, groups:  Phecode, 651
+
+Fixed effects:
+                        Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)             -4.57680    0.04889 -93.612  &lt; 2e-16 ***
+coloc08_phecode_grouped 32.15914    6.15840   5.222 1.77e-07 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+clc08_phcd_ 0.000 </code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+unable to evaluate scaled gradient</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Hessian is numerically singular: parameters are not uniquely determined</code></pre>
+<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: PHECODE_SE_grouped ~ omim_phecode_grouped + (1 | Phecode)
+   Data: Byphecode_agggregategene_collapsed
+
+     AIC      BIC   logLik deviance df.resid 
+ 70559.8  70592.3 -35276.9  70553.8   384087 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.4356 -0.1637 -0.1018 -0.0667 17.8363 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Phecode (Intercept) 1.484    1.218   
+Number of obs: 384090, groups:  Phecode, 651
+
+Fixed effects:
+                       Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)          -4.503e+00  5.107e-02 -88.158   &lt;2e-16 ***
+omim_phecode_grouped  2.704e+01  3.453e+04   0.001    0.999    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Correlation of Fixed Effects:
+            (Intr)
+omm_phcd_gr 0.000 
+convergence code: 0
+unable to evaluate scaled gradient
+ Hessian is numerically singular: parameters are not uniquely determined</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.3 (2019-03-11)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] lme4_1.1-23       Matrix_1.2-18     dplyr_1.0.0       xlsx_0.6.3       
+[5] stringr_1.4.0     data.table_1.12.8 workflowr_1.6.2  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.4       nloptr_1.2.2.1   compiler_3.5.3   pillar_1.4.4    
+ [5] later_1.1.0.1    git2r_0.27.1     tools_3.5.3      boot_1.3-25     
+ [9] statmod_1.4.34   digest_0.6.25    nlme_3.1-145     lattice_0.20-40 
+[13] evaluate_0.14    lifecycle_0.2.0  tibble_3.0.1     pkgconfig_2.0.3 
+[17] rlang_0.4.6      cli_2.0.2        yaml_2.2.1       xfun_0.14       
+[21] rJava_0.9-12     knitr_1.28       generics_0.0.2   xlsxjars_0.6.1  
+[25] fs_1.3.1         vctrs_0.3.1      rprojroot_1.3-2  grid_3.5.3      
+[29] tidyselect_1.1.0 glue_1.4.1       R6_2.4.1         fansi_0.4.1     
+[33] rmarkdown_2.2    minqa_1.2.4      purrr_0.3.4      magrittr_1.5    
+[37] whisker_0.4      MASS_7.3-51.5    splines_3.5.3    backports_1.1.5 
+[41] promises_1.1.1   htmltools_0.4.0  ellipsis_0.3.1   assertthat_0.2.1
+[45] httpuv_1.5.2     utf8_1.1.4       stringi_1.4.6    crayon_1.3.4    </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
