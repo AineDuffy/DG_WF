@@ -93,7 +93,7 @@ allcat$category=allphecode$category[match(allcat$PHECODE_SE, allphecode$phecode)
 allcat$level2<-trunc(allcat$PHECODE_SE)
 allcat$level3<-as.numeric(paste0(allcat$level2,'.',str_sub(allcat$PHECODE_SE %% 1, start=3, end=3)))
 allcat$category=gsub('endocrine/metabolic','endocrine_metabolic', allcat$category)
-allcat$pathString=paste("category",allcat$category, allcat$level2,allcat$PHECODE_SE,  sep = "/")
+allcat$pathString=paste("category",allcat$category, allcat$level2, allcat$level3,allcat$PHECODE_SE,  sep = "/")
 population2 <- as.Node(allcat)
 allcat_plot <- circlepackeR(population2, size = "no_drugs")
 #allcat_plot <- circlepackeR(population2, size = "no_drugs", color_min = "hsl(56,80%,80%)", color_max = "hsl(341,30%,40%)")
@@ -112,7 +112,8 @@ allcat_coloc$category=allphecode$category[match(allcat_coloc$coloc08_phecode, al
 allcat_coloc$level2<-trunc(allcat_coloc$coloc08_phecode)
 allcat_coloc$level3<-as.numeric(paste0(allcat_coloc$level2,'.',str_sub(allcat_coloc$coloc08_phecode %% 1, start=3, end=3)))
 allcat_coloc$category=gsub('endocrine/metabolic','endocrine_metabolic', allcat_coloc$category)
-allcat_coloc$pathString=paste("category",allcat_coloc$category, allcat_coloc$level2,allcat_coloc$coloc08_phecode,  sep = "/")
+allcat_coloc$pathString=paste("category",allcat_coloc$category, allcat_coloc$level2,allcat_coloc$level3,allcat_coloc$coloc08_phecode,  sep = "/")
+
 allcat_coloc=allcat_coloc[!is.na(allcat_coloc$category),]
 population2_coloc <- as.Node(allcat_coloc)
 allcat_plot_coloc <- circlepackeR(population2_coloc, size = "no_drugs", color_min = "hsl(56,80%,80%)", color_max = "hsl(341,30%,40%)")
